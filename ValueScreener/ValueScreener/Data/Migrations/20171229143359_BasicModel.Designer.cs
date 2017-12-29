@@ -12,9 +12,10 @@ using ValueScreener.Models.Domain;
 namespace ValueScreener.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171229143359_BasicModel")]
+    partial class BasicModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -270,8 +271,6 @@ namespace ValueScreener.Data.Migrations
                     b.Property<decimal>("MarketCapitalization");
 
                     b.Property<int>("OutstandingShares");
-
-                    b.Property<string>("QuotationPlace");
 
                     b.Property<int>("QuotationUnit");
 
