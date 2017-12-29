@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace ValueScreener.Models.Domain
@@ -21,6 +22,8 @@ namespace ValueScreener.Models.Domain
         public MarketData MarketData { get; set; }
         public PricingResult PricingResult { get; set; }
         public List<FinancialStatement> FinancialStatements { get; set; }
+        [DisplayName("Quotation Place")]
+        public string QuotationPlace { get; set; }
     }
 
  

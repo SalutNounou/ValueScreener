@@ -22,7 +22,7 @@ namespace ValueScreener.Controllers
         // GET: Stocks
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Stocks.ToListAsync());
+            return View(await _context.Stocks.OrderBy(s=>s.Ticker).ToListAsync());
         }
 
         // GET: Stocks/Details/5
@@ -54,7 +54,7 @@ namespace ValueScreener.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Ticker,Name,Sector,Industry,Country,Currency")] Stock stock)
+        public async Task<IActionResult> Create([Bind("Id,Ticker,Name,Sector,Industry,Country,Currency,QuotationPlace")] Stock stock)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace ValueScreener.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Ticker,Name,Sector,Industry,Country,Currency")] Stock stock)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Ticker,Name,Sector,Industry,Country,Currency,QuotationPlace")] Stock stock)
         {
             if (id != stock.Id)
             {

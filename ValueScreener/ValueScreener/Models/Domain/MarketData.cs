@@ -10,7 +10,7 @@
         public QuotationUnit QuotationUnit { get; set; }
         public decimal MarketCapitalization { get; set; }
         public int OutstandingShares { get; set; }
-        public string QuotationPlace { get; set; }
+       
 
     }
 
