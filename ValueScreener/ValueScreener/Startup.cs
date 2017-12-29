@@ -1,16 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ValueScreener.Authorization;
+using ValueScreener.Controllers;
+using ValueScreener.Controllers.ScreenerCriteria;
+using ValueScreener.Controllers.Screeners;
 using ValueScreener.Data;
 using ValueScreener.Models;
 using ValueScreener.Services;
+using ValueScreener.Services.Batch;
+using ValueScreener.Services.FinancialStatements;
+using ValueScreener.Services.MarketData;
+using ValueScreener.Services.Valuation;
 
 namespace ValueScreener
 {
@@ -32,11 +39,32 @@ namespace ValueScreener
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+            services.AddHangfire(config =>
+                config.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IAuthorizationHandler, AdministratorAuthorizationHandler>();
+            services.AddTransient<IMarketDataService, MarketDataService>();
+            services.AddTransient<IStockMarketDataUpdater, StockMarketDataUpdater>();
+            services.AddTransient<IFinancialStatementService>(s => new EdgarFinancialStatementService(Configuration["Services:EdgarApiKey"]));
+            services.AddTransient<IFinancialStatementOrganizer, FinancialStatementOrganizer>();
+            services.AddTransient<IStockEvaluator, StockEvaluator>();
+            services.AddTransient<IValuationHintAnalyzer, ValuationHintAnalyzer>();
+            services.AddTransient<IFinancialStatementUpdater, FinancialStatementUpdater>();
+            services.AddSingleton<IScreenerFactory, ScreenerFactory>();
+            services.AddSingleton<IScreenerCriteriaFactory, ScreenerCriteriaFactory>();
+            services.AddSingleton<IScreenerCellsGenerator, ScreenerCellsGenerator>();
+            services.AddTransient<IApplicationBatchService, ApplicationBatchService>();
+            services.AddMvc(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+            });
 
-            services.AddMvc();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,17 +80,30 @@ namespace ValueScreener
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            app.UseDefaultFiles();
             app.UseStaticFiles();
+
+
 
             app.UseAuthentication();
 
+           
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            });
+            app.UseHangfireServer();
+            DbInitializer.EnsureAdminUser(app.ApplicationServices).Wait();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            RecurringJob.AddOrUpdate<IApplicationBatchService>("Retrieve MarketData", service => service.RetrieveAllMArketData(), "0 3 */1 * *");
+
+            RecurringJob.AddOrUpdate<IApplicationBatchService>("Retrieve Everything", service=>service.RetrieveEverything(), "0 4 */1 * *" );
         }
     }
 }

@@ -1,0 +1,92 @@
+﻿@model ValueScreener.Models.ViewModels.ScreenerViewModel
+
+<br />
+<h2>@ViewData["Title"]</h2>
+<br />
+
+<div class="dropdown text-right">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add Columns<span class="caret"></span></button>
+    <ul class="dropdown-menu dropdown-menu-right">
+        @foreach (var column in Model.AvailableAdditionalColumns)
+        {
+            <li><a asp-route-page="@Model.PageIndex"
+                   asp-route-criteria="@ViewData["Criteria"]"
+                   asp-route-columns="@ViewData["Columns"]"
+                   asp-route-columnToken="x"
+                   asp-route-columnToAdd="@column.Key">
+                 @Html.DisplayFor(model => column.Value)
+            </a></li>
+        }
+    </ul>
+</div>
+<br />
+<div class="row">
+    <table class="table table-striped">
+        <tr>
+           @foreach (var columnTitle in Model.ColumnTitles)
+           {
+             <th>@columnTitle.Title
+            @if (!columnTitle.IsSticky)
+            {
+                <a asp-route-page="@Model.PageIndex"
+                   asp-route-criteria="@ViewData["Criteria"]"
+                   asp-route-columns="@ViewData["Columns"]"
+                   asp-route-columnToken="x"
+                   asp-route-columnToRemove="@columnTitle.columnId">
+                    <i class="fa fa-times"></i>
+                </a>
+            }
+            </th>   
+           }
+        </tr>
+        @foreach (var row in Model.Rows)
+        {
+            <tr>
+               @foreach (var cell in row.Cells)
+               {
+                   @await Component.InvokeAsync("ScreenerCell", new { viewModel = cell })
+               }
+            </tr>
+        }
+    </table>
+</div>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+
+<div class="divider"></div>
+<form asp-action="Screen" method="get">
+    <div class="form-group">
+        <p>
+            Page : @Model.PageIndex of @Model.TotalPages | GoTo :
+            <input type="number" name="page" value="@Model.PageIndex" />
+            <input type="hidden" name="criteria" value="@ViewData["Criteria"]" />
+            <input type="hidden"  name="columns" value="@ViewData["Columns"]"/>
+            <input type="hidden" name="columnToken" value="x"/>
+            <input type="submit" value="Go" class="btn btn-default" />
+        </p>
+    </div>
+</form>
+<a asp-action="Screen"
+   asp-route-page="@(Model.PageIndex - 1)"
+   asp-route-criteria="@ViewData["Criteria"]"
+   asp-route-columns="@ViewData["Columns"]"
+   asp-route-columnToken="x"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+
+
+<a asp-action="Screen"
+   asp-route-page="@(Model.PageIndex + 1)"
+   asp-route-criteria="@ViewData["Criteria"]"
+   asp-route-columns="@ViewData["Columns"]"
+   asp-route-columnToken="x"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+
+

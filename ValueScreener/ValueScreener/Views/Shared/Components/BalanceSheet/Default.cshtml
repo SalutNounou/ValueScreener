@@ -1,0 +1,232 @@
+﻿@using ValueScreener.Models.Domain
+@model ValueScreener.Models.ViewModels.FinancialStatementViewModel
+
+@if (Model.FinancialStatements != null)
+{
+    <table class="table table-striped">
+
+        <tr>
+            <th>Year</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.FiscalYear)</th>
+            }
+        </tr>
+        @if (Model.Frequency == StatementFrequency.Quarterly)
+        {
+            <tr>
+                <th>Quarter</th>
+                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+                {
+                    <td>Q @Html.DisplayFor(model => statement.FiscalQuarter)</td>
+                }
+            </tr>
+        }
+        <tr>
+            <th>Date Released</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.ReceivedDate)</td>
+            }
+        </tr>
+        <tr>
+            <th>Form Type</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.FormType)</td>
+            }
+        </tr>
+        <tr><th><h3>Assets</h3></th></tr>
+        <tr>
+            <th>Cash and Equivalent</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.CashAndCashEquivalent)</td>
+            }
+        </tr>
+        <tr>
+            <th>Cash, Equivalent and Short Term Investment</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.CashCashEquivalentAndShortTermInvestments)</td>
+            }
+        </tr>
+        <tr>
+            <th>Net Receivables</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.TotalReceivableNet)</td>
+            }
+        </tr>
+        <tr>
+            <th>Inventory</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.InventoriesNet)</td>
+            }
+        </tr>
+        <tr>
+            <th>Other Current Assets</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.RealOtherCurrentAssets)</td>
+            }
+        </tr>
+        <tr>
+            <th>Total Current Assets</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.BalanceSheet.TotalCurrentAssets)</th>
+            }
+        </tr>
+        <tr>
+            <th>Property, Plant and Equipment</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.PropertyPlantEquipmentNet)</td>
+            }
+        </tr>
+        <tr>
+            <th>Goodwill</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.Goodwill)</td>
+            }
+        </tr>
+        <tr>
+            <th>Intangible Assets</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.IntangibleAssets)</td>
+            }
+        </tr>
+        <tr>
+            <th>Other Assets</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.OtherAssets)</td>
+            }
+        </tr>
+        <tr>
+            <th>Deferred Charges</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.RealDeferredCharges)</td>
+            }
+        </tr>
+        <tr>
+            <th>Total Assets</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.BalanceSheet.TotalAssets)</th>
+            }
+        </tr>
+        <tr><th><h3>Liabilities</h3></th></tr>
+        <tr>
+            <th>Account Payables</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.AccountPayables)</td>
+            }
+        </tr>
+        <tr>
+            <th>Short Term Debt</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.TotalShortTermDebt)</td>
+            }
+        </tr>
+        <tr>
+            <th>Other Short Current Liabilities</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.OtherCurrentLiabilities)</td>
+            }
+        </tr>
+        <tr>
+            <th>Total Current Liabilities</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.BalanceSheet.TotalCurrentLiabilities)</th>
+            }
+        </tr>
+        <tr>
+            <th>Long Term Debt</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.TotalLongTermDebt)</td>
+            }
+        </tr>
+        <tr>
+            <th>Minority Interest</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.MinorityInterest)</td>
+            }
+        </tr>
+        <tr>
+            <th>Other Liabilities</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.OtherLiabilities)</td>
+            }
+        </tr>
+        <tr>
+            <th>Total Liabilities</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.BalanceSheet.TotalLiabilities)</th>
+            }
+        </tr>
+        <tr><th><h3>Equity</h3></th></tr>
+        <tr>
+            <th>Preferred Stock</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.PreferredStock)</td>
+            }
+        </tr>
+        <tr>
+            <th>Common Stock</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.CommonStock)</td>
+            }
+        </tr>
+        <tr>
+            <th>Retained Earnings</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.RetainedEarnings)</td>
+            }
+        </tr>
+        <tr>
+            <th>Treasury Stock</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.TreasuryStock)</td>
+            }
+        </tr>
+        <tr>
+            <th>Capital Surplus</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.CapitalSurplus)</td>
+            }
+        </tr>
+        <tr>
+            <th>Other Equity</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.BalanceSheet.OtherEquity)</td>
+            }
+        </tr>
+        <tr>
+            <th>Total Equity</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => @statement.BalanceSheet.RealTotalEquity)</th>
+            }
+        </tr>
+    </table>
+}

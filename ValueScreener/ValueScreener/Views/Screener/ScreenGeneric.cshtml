@@ -1,0 +1,123 @@
+﻿@using ValueScreener.Controllers.ScreenerColumns
+@using ValueScreener.Models.ViewModels
+@model GenericScreenerViewModel
+
+<br />
+<h1>Build your own Screener</h1>
+<br />
+<form asp-action="ScreenGeneric" method="get" id="my_form" class="form-group">
+    @if (Model.Criterias != null)
+    {
+        for (var index = 0; index < Model.Criterias.Count; index++)
+        {
+            <div class="form-group form-inline">
+                <label asp-for="@Model.Criterias[index].Name"></label>
+                <input readonly="readonly" asp-for="@Model.Criterias[index].Name" />
+
+                <select asp-for="@Model.Criterias[index].Operation" asp-items="@Model.CriteriaOperators" class="form-control"></select>
+                    <input asp-for="@Model.Criterias[index].ValueType" type="hidden" />
+                    <input asp-for="@Model.Criterias[index].Id" type="hidden" />
+
+                <input asp-for="@Model.Criterias[index].ValueType" type="hidden" />
+                <input asp-for="@Model.Criterias[index].Id" type="hidden" />
+
+
+
+                @if (Model.Criterias[index].ValueType == CellKind.Text)
+                {
+                    <input asp-for="@Model.Criterias[index].StringValue" class="form-control" />
+                }
+                @if (Model.Criterias[index].ValueType == CellKind.Number)
+                {
+                    <input asp-for="@Model.Criterias[index].NumberValue" class="form-control" />
+                }
+                @if (Model.Criterias[index].ValueType == CellKind.Percentage)
+                {
+                    <input asp-for="@Model.Criterias[index].NumberValue" class="form-control" /> @Html.Raw("% ")
+                }
+                @*<a href="@Model.GetUrl(Model.PageIndex,@Model.Criterias[index].Id, null, null, Model.Columns)"><i class="fa fa-times-circle"></i></a>*@
+
+            </div>
+        }
+    }
+    <input type="hidden" name="Columns" value="@Model.Columns" />
+    <div class="form-group form-inline">
+        <label asp-for="CriteriaToAdd"></label>
+        <select name="CriteriaToAdd" class="form-control">
+            <option value="none">None</option>
+            @foreach (var column in ColumnConstants.Columns)
+            {
+                <option value="@column.Key">@column.Value</option>
+            }
+        </select>
+        <br />
+        <br />
+        <button type="submit" class="btn btn-primary btn-lg">Let's Go!</button>
+    </div>
+
+</form>
+<br />
+<h2>Results :</h2>
+
+<div class="dropdown text-right">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add Columns<span class="caret"></span></button>
+    <ul class="dropdown-menu dropdown-menu-right">
+        @foreach (var column in Model.AvailableAdditionalColumns)
+        {
+            <li>
+                <a href="@Model.GetUrl(Model.PageIndex,null,column.Key,null, Model.Columns)">
+                    @Html.DisplayFor(model => column.Value)
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+<br />
+<div class="row">
+    <table class="table table-striped">
+        <tr>
+            @foreach (var columnTitle in Model.ColumnTitles)
+            {
+                <th>
+                    @columnTitle.Title
+                    @if (!columnTitle.IsSticky)
+                    {
+                        <a href="@Model.GetUrl(Model.PageIndex,null, null, columnTitle.columnId, Model.Columns)">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    }
+                </th>
+            }
+        </tr>
+        @foreach (var row in Model.Rows)
+        {
+            <tr>
+                @foreach (var cell in row.Cells)
+                {
+                    @await Component.InvokeAsync("ScreenerCell", new { viewModel = cell })
+                }
+            </tr>
+        }
+    </table>
+</div>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+<br />
+<p>Page : @Model.PageIndex of @Model.TotalPages</p>
+@*<a class="btn btn-primary" href="@Model.GetUrl(Model.PageIndex+1, null)">Next</a>*@
+
+<a href="@Model.GetUrl(Model.PageIndex-1,null, null, null, Model.Columns)"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+
+
+<a href="@Model.GetUrl(Model.PageIndex+1,null, null,null, Model.Columns)"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+

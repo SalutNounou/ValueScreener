@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ValueScreener.Models;
 
@@ -10,6 +7,7 @@ namespace ValueScreener.Controllers
 {
     public class HomeController : Controller
     {
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
@@ -26,6 +24,21 @@ namespace ValueScreener.Controllers
         {
             ViewData["Message"] = "Your contact page.";
 
+            return View();
+        }
+
+        [AllowAnonymous]
+        public IActionResult ScreenerList()
+        {
+            ViewData["Title"] = "All Screeners";
+            return View();
+        }
+
+
+        [AllowAnonymous]
+        public IActionResult Faq()
+        {
+            ViewData["Title"] = "FAQ";
             return View();
         }
 

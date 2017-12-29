@@ -1,0 +1,130 @@
+﻿@using ValueScreener.Authorization
+@using ValueScreener.Models.Domain
+@model PaginatedList<ValueScreener.Models.Domain.Stock>
+
+@{
+    ViewData["Title"] = "All Stocks";
+}
+
+<h2>All Stocks</h2>
+
+<p>
+    @if ((await AuthorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Create)).Succeeded)
+    {
+        <a asp-action="Create">Create New</a>
+    }
+</p>
+
+<form asp-action="Index" method="get">
+    <div class="form-group">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+
+</form>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TickerParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Ticker</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Name</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["SectorParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Sector</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["IndustryParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Industry</a>
+            </th>
+
+            <th>
+                Currency
+            </th>
+            <th>Quotation Place</th>
+            <th>
+                Country
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.Ticker)</a>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.Name)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sector)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Industry)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Currency)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuotationPlace)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Country)
+                </td>
+                <td>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Update)).Succeeded)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <text>|</text>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+
+<div class="divider"></div>
+<form asp-action="Index" method="get" asp-route-sortOrder="@ViewData["CurrentSort"]">
+
+
+    <div class="form-group">
+        <p>
+
+            Page : @Model.PageIndex of @Model.TotalPages | GoTo :
+            <input type="number" name="page" value="@Model.PageIndex" />
+            <input type="hidden" name="currentFilter" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Go" class="btn btn-default" />
+        </p>
+    </div>
+
+
+</form>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+

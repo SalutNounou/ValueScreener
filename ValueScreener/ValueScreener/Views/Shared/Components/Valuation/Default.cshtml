@@ -1,0 +1,349 @@
+﻿@model ValueScreener.Models.ViewModels.ValuationViewModel
+@using ValueScreener.Authorization
+@using ValueScreener.Models.Domain
+<br />
+@foreach (var hint in Model.Hints.Values)
+{
+    var level = hint.Level.ToString().ToLower();
+    <div class="alert alert-@level">
+        @hint.Message
+    </div>
+    <br />
+}
+
+<table class="table table-striped">
+    <tr><th><h4>Price Ratios :</h4></th></tr>
+    <tr>
+        <th> Price/Earnings Ratio</th>
+        <td>
+            @Html.DisplayFor(model => model.PricingResult.PriceEarningRatio)
+        </td>
+    </tr>
+    <tr>
+        <th> Price/Sales Ratio</th>
+        <td> @Html.DisplayFor(model => model.PricingResult.PriceToSalesRatio) </td>
+    </tr>
+    <tr>
+        <th> Price/Book Ratio</th>
+        <td> @Html.DisplayFor(model => model.PricingResult.PriceToBookRatio) </td>
+    </tr>
+    <tr>
+        <th> Enterprise Value</th>
+        <td>
+            @if (Model.PricingResult != null)
+            {
+                @Html.DisplayFor(model => model.PricingResult.EnterpriseValue) @: @Model.Currency
+            }
+        </td>
+    </tr>
+    <tr>
+        <th> EV/Ebitda</th>
+        <td>
+            @if (Model.PricingResult != null)
+            {
+                @Html.DisplayFor(model => model.PricingResult.EnterpriseMultiple)
+            }
+        </td>
+    </tr>
+    <tr>
+        <th> Price/FCF</th>
+        <td>
+            @if (Model.PricingResult != null)
+            {
+                @Html.DisplayFor(model => model.PricingResult.CurrentPriceToFcfRatio)
+            }
+        </td>
+    </tr>
+    <tr>
+        <th> Average Price/FCF</th>
+        <td>
+            @if (Model.PricingResult != null)
+            {
+                @Html.DisplayFor(model => model.PricingResult.AveragePriceToFcfRatio)
+            }
+        </td>
+    </tr>
+</table>
+<table class="table table-striped">
+    <tr><th><h4>Annual Returns :</h4></th></tr>
+    <tr>
+        <th>Year</th>
+        @if (Model.PricingResult != null)
+        {
+            <th>Average</th>
+            foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <th>@Html.DisplayFor(model => annualResult.Year)</th>
+            }
+
+        }
+    </tr>
+    <tr>
+        <th>ROA</th>
+        @if (Model.PricingResult != null)
+        {
+            <th>@Html.DisplayFor(model => Model.PricingResult.AverageRoa)  %</th>
+            foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.ReturnOnAssets)  %</td>
+            }
+
+        }
+    </tr>
+    <tr>
+        <th>ROE</th>
+        @if (Model.PricingResult != null)
+        {
+            <th>@Html.DisplayFor(model => Model.PricingResult.AverageRoe)  %</th>
+            foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.ReturnOnEquity)  %</td>
+            }
+
+        }
+    </tr>
+    <tr>
+        <th>ROIC</th>
+        @if (Model.PricingResult != null)
+        {
+            <th>@Html.DisplayFor(model => Model.PricingResult.AverageRoic)  %</th>
+            foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.ReturnOnInvestedCapital)  %</td>
+            }
+
+        }
+    </tr>
+    <tr>
+        <th>Free Cash Flows (@Model.Currency)</th>
+        @if (Model.PricingResult != null)
+        {
+            <th>@Html.DisplayFor(model => Model.PricingResult.AverageFreeCashFlow) </th>
+            foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.FreeCashFlow)  </td>
+            }
+
+        }
+    </tr>
+
+</table>
+<br />
+<table class="table table-striped">
+    <tr><th><h4>Financial Health :</h4></th></tr>
+    <tr>
+        <th> Net Current Asset Value</th>
+        <td>
+            @if (Model.PricingResult != null)
+            {
+                @Html.DisplayFor(model => model.PricingResult.NetCurrentAssetValue)
+                @: @Model.Currency
+            }
+        </td>
+    </tr>
+    <tr>
+        <th> Discount on NCAV</th>
+        <td> @Html.DisplayFor(model => model.PricingResult.DiscountOnNcav) %</td>
+    </tr>
+    <tr>
+        <th> Solvency Ratio</th>
+        <td> @Html.DisplayFor(model => model.PricingResult.LeverageRatio) %</td>
+    </tr>
+    <tr>
+        <th> Times Interest Earned</th>
+        <td> @Html.DisplayFor(model => model.PricingResult.TimesInterestCovered) </td>
+    </tr>
+</table>
+
+<br />
+@if (Model.PricingResult != null && Model.PricingResult.AnnualResults.Any())
+{
+    <table class="table table-striped">
+        <tr>
+            <th><h4>Annual Ratios :</h4></th>
+        </tr>
+        <tr>
+            <th>Year</th>
+            <th>Average</th>
+            @foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <th>@Html.DisplayFor(model => annualResult.Year)</th>
+            }
+        </tr>
+        <tr>
+            <th>Sales Growth</th>
+            <td>@Model.PricingResult.AverageSalesGrowth %</td>
+            @foreach (var annualResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.SalesGrowth)%</td>
+            }
+        </tr>
+        <tr>
+            <th>Gross Margin</th>
+            <td>@Model.PricingResult.AverageGrossMargin %</td>
+            @foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.GrossMargin)%</td>
+            }
+        </tr>
+        <tr>
+            <th>Net Margin</th>
+            <td>@Model.PricingResult.AverageNetMargin %</td>
+            @foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.NetMargin)%</td>
+            }
+        </tr>
+        <tr>
+            <th>Asset Turnover</th>
+            <td>@Model.PricingResult.AverageAssetTurnover %</td>
+            @foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.AssetTurnover)%</td>
+            }
+        </tr>
+        <tr>
+            <th>Current Ratio</th>
+            <td>@Model.PricingResult.AverageCurrentRatio %</td>
+            @foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.CurrentRatio)%</td>
+            }
+        </tr>
+        <tr>
+            <th>Quick Ratio</th>
+            <td>@Model.PricingResult.AverageQuickRatio %</td>
+            @foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.QuickRatio)%</td>
+            }
+        </tr>
+        <tr>
+            <th>Leverage</th>
+            <td>@Model.PricingResult.AverageLeverage </td>
+            @foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.Leverage)</td>
+            }
+        </tr>
+
+    </table>
+    <br />
+}
+@if (@Model.PricingResult != null && @Model.PricingResult.PiotroskiResults.Any())
+{
+    <table class="table table-striped">
+        <tr><th><h4>Annual Piotroski F-Scores :</h4></th></tr>
+        <tr>
+            <th>Year</th>
+            @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <th>@piotroskiResult.Year</th>
+            }
+            <th>Average</th>
+        </tr>
+        <tr>
+            <th>Global Piotroski F-Score</th>
+            @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <th>@piotroskiResult.GlobalFScore</th>
+            }
+            <th>@Html.DisplayFor(model => Model.PricingResult.AveragePiotroskiScore)</th>
+        </tr>
+        <tr>
+            <th>Positive Income</th>
+            @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <td>@piotroskiResult.PositiveReturns.ToFriendlyString()</td>
+            }
+        </tr>
+        <tr>
+            <th>Positive Operating Cash</th>
+            @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <td>@piotroskiResult.PositiveOperatingCashFlow.ToFriendlyString()</td>
+            }
+        </tr>
+        <tr>
+            <th>Quality of Earnings</th>
+            @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <td>@piotroskiResult.GoodAccrual.ToFriendlyString()</td>
+            }
+        </tr>
+        <tr>
+            <th>Higher ROA</th>
+            @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <td>@piotroskiResult.HigherReturnOnAssets.ToFriendlyString()</td>
+            }
+        </tr>
+        <tr>
+            <th>Higher Gross Margin</th>
+            @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <td>@piotroskiResult.HigherGrossMargin.ToFriendlyString()</td>
+            }
+        </tr>
+        <tr>
+            <th>Higher Asset Turnover Ratio</th>
+            @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <td>@piotroskiResult.HigherAssetTurnover.ToFriendlyString()</td>
+            }
+        </tr>
+        <tr>
+            <th>Lower Leverage</th>
+            @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <td>@piotroskiResult.LowerLeverage.ToFriendlyString()</td>
+            }
+        </tr>
+        <tr>
+            <th>Higher Current Ratio</th>
+            @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))
+            {
+                <td>@piotroskiResult.HigherCurrentRatio.ToFriendlyString()</td>
+            }
+        </tr>
+        <tr>
+            <th>Outstanding Shares</th>
+            <td colspan="@Model.PricingResult.PiotroskiResults.Count" class="text-center">
+                Not Available.
+                <a type="button" data-toggle="modal" data-target="#modalPiotroski"> Why?</a>
+            </td>
+        </tr>
+    </table>
+    <div class="modal fade" id="modalPiotroski" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Piotroski F-Score</h4>
+                </div>
+                <div class="modal-body">
+                    <p>The last point of the Piotroski F-score measures if a company has been diluting its investors by emitting more shares during the year observed.</p>
+                    <p>Unfortunately, The Value Screener does not yet have access to a reliable data bank which could provide this data.</p>
+                    <p>But if you know one which is reliable and convenient, please contact us!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<br />
+
+
+
+@if ((await AuthorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Create)).Succeeded)
+{
+    <form asp-controller="Stocks" asp-action="RefreshValuationCalculation" method="Post" asp-route-id="@Model.Id" asp-route-tab="valuation">
+        <div class="form-group text-center">
+            <input type="submit" value="Recalculate" class="btn btn-primary" />
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </form>
+}

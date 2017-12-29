@@ -1,0 +1,147 @@
+﻿@using ValueScreener.Models.Domain
+@model ValueScreener.Models.ViewModels.FinancialStatementViewModel
+@if (Model.FinancialStatements != null)
+{
+    <table class="table table-striped">
+        <tr>
+            <th>Year</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.FiscalYear)</th>
+            }
+        </tr>
+        @if (Model.Frequency == StatementFrequency.Quarterly)
+        {
+            <tr>
+                <th>Quarter</th>
+                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+                {
+                    <td>Q @Html.DisplayFor(model => statement.FiscalQuarter)</td>
+                }
+            </tr>
+        }
+        <tr>
+            <th>Date Released</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.ReceivedDate)</td>
+            }
+        </tr>
+        <tr>
+            <th>Form Type</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.FormType)</td>
+            }
+        </tr>
+        <tr><th>Revenue</th></tr>
+        <tr>
+            <th>Total Revenue</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.IncomeStatement.TotalRevenue)</td>
+            }
+        </tr>
+        <tr>
+            <th>Cost of Revenue</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.IncomeStatement.CostOfRevenue)</td>
+            }
+        </tr>
+        <tr>
+            <th>Gross Profit</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.IncomeStatement.GrossProfit)</th>
+            }
+        </tr>
+        <tr><th>Operating Expenses</th></tr>
+        <tr>
+            <th>Research And Development</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.IncomeStatement.ResearchDevelopementExpense)</td>
+            }
+        </tr>
+        <tr>
+            <th>Selling General And Administrative</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.IncomeStatement.SellingGeneralAdministrativeExpense)</td>
+            }
+        </tr>
+
+        <tr>
+            <th>Operating Income </th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.IncomeStatement.Ebit)</th>
+            }
+        </tr>
+        <tr>
+            <th>Ebit </th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.IncomeStatement.Ebit)</td>
+            }
+        </tr>
+        <tr>
+            <th>Interest Expense </th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.IncomeStatement.InterestExpense)</td>
+            }
+        </tr>
+        <tr>
+            <th>Income Before Tax </th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.IncomeStatement.IncomeBeforeTaxes)</td>
+            }
+        </tr>
+        <tr>
+            <th>Tax Expense </th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.IncomeStatement.TaxExpense)</td>
+            }
+        </tr>
+        <tr>
+            <th>Income From Continuing Operation </th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.IncomeStatement.IncomeFromContinuingOperation)</th>
+            }
+        </tr>
+        <tr><th>Non Recurring Events</th></tr>
+        <tr>
+            <th>Discontinued Operations </th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.IncomeStatement.DiscontinuedOperation)</td>
+            }
+        </tr>
+        <tr>
+            <th>Extraordinary Items</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <td>@Html.DisplayFor(model => statement.IncomeStatement.ExtraordinaryItems)</td>
+            }
+        </tr>
+        <tr>
+            <th>Net Income </th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.IncomeStatement.NetIncome)</th>
+            }
+        </tr>
+        <tr>
+            <th>Net Income Applicable to Common Shares </th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
+            {
+                <th>@Html.DisplayFor(model => statement.IncomeStatement.NetIncomeApplicableToCommon)</th>
+            }
+        </tr>
+    </table>
+}

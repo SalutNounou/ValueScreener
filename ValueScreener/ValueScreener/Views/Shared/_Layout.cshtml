@@ -1,19 +1,23 @@
-﻿<!DOCTYPE html>
+﻿@using ValueScreener.Controllers.Screeners
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Value Screener</title>
+    <title>@ViewData["Title"] -The Value Screener</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css"/>
     </environment>
+    <link rel="shortcut icon" href="/favicon.ico">
     <environment exclude="Development">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css"/>
     </environment>
 </head>
 <body>
@@ -26,13 +30,40 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Value Screener</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand" style="display: flex; align-items: center">
+                    <div>
+                        <img src="/images/configuration-small.png" style="width: 40px" />
+                        The Value Screener
+                    </div>
+                </a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li><a asp-area="" asp-controller="Stocks" asp-action="Index">All Stocks</a></li>
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            Screeners
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.NetNets">Net Net Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Piotroski">Piotroski F-Score Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgPiotroski">Piotroski F-Score(Avg) Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.EnterpriseMultiple">EV/Ebitda Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roa">ROA Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoa">ROA (Avg) Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roic">ROIC Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoic">ROIC (Avg) Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roe">ROE Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoe">ROE (Avg) Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.PriceToSales"> Price To Sales Screener </a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.PriceFcf"> Price To Free Cash Flows Screener </a></li>
+
+                        </ul>
+                    </li>
+                    <li><a asp-area="" asp-controller="Screener" asp-action="ScreenGeneric">Screener Builder</a></li>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Faq">FAQ</a></li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
@@ -42,7 +73,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2018 - Value Screener by Julien Husser</p>
+            <p>&copy; 2018 - Value Screener by Julianek</p>
         </footer>
     </div>
 

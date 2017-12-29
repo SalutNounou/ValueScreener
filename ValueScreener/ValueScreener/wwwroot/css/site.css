@@ -20,6 +20,9 @@
 .carousel-inner .item img[src$=".svg"] {
     width: 100%;
 }
+.carousel-inner .item img[src$=".jpg"] {
+    width: 100%;
+}
 
 /* QR code generator */
 #qrCode {

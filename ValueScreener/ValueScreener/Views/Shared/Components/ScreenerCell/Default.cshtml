@@ -1,0 +1,35 @@
+﻿@using ValueScreener.Models.ViewModels
+@model ScreenerCellViewModel
+
+<td>
+    @if (Model.IsLink)
+    {
+       @: <a @Html.Raw("href=\"/Stocks/Details?id=" +Model.StockId +"\"")>
+    }
+    @if (Model.IsBold)
+    {
+        @: <strong>
+    }
+    @if (Model.CellKind == CellKind.Text)
+    {
+        @Model.StringValue
+    }
+    @if (Model.CellKind == CellKind.Number)
+    {
+        @Html.DisplayFor(model=> Model.NumberValue)
+    }
+    @if (Model.CellKind == CellKind.Percentage)
+    {
+        @Html.DisplayFor(model=> Model.PercentageValue) @:%
+    }
+
+
+    @if (Model.IsBold)
+    {
+        @: </strong>
+    }
+    @if (Model.IsLink)
+    {
+      @:  </a>
+    }
+</td>

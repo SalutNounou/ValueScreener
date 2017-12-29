@@ -1,0 +1,91 @@
+﻿@model Stock
+@using ValueScreener.Authorization
+@using ValueScreener.Models.Domain
+
+@{
+    ViewData["Title"] = Model.Ticker + " Details";
+}
+
+<h2>@Html.DisplayFor(model => model.Name)</h2>
+
+<div>
+    <hr />
+    @{
+        var generalActive = string.IsNullOrEmpty((string)ViewData["activeTab"]) ? "active" : ((string)ViewData["activeTab"] == "general" ? "active" : string.Empty);
+        var generalActiveTab = generalActive == "active" ? "in active" : String.Empty;
+        var financialActive = string.IsNullOrEmpty((string)ViewData["activeTab"]) ? string.Empty : ((string)ViewData["activeTab"] == "financials" ? "active" : string.Empty);
+        var financialActiveTab = financialActive == "active" ? "in active" : String.Empty;
+        var valuationActive = string.IsNullOrEmpty((string)ViewData["activeTab"]) ? string.Empty : ((string)ViewData["activeTab"] == "valuation" ? "active" : string.Empty);
+        var valuationActiveTab = valuationActive == "active" ? "in active" : String.Empty;
+        var frequency = string.IsNullOrEmpty((string)ViewData["frequency"]) ? "annual" : ((string)ViewData["frequency"] == "quarterly" ? "quarterly" : "annual");
+    }
+    <ul class="nav nav-tabs">
+        <li class="@generalActive"><a data-toggle="tab" href="#general">General</a></li>
+        <li class="@financialActive"><a data-toggle="tab" href="#financialstatements">Financial Statements</a></li>
+        <li class="@valuationActive"><a data-toggle="tab" href="#valuation">Valuation</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="general" class="tab-pane fade @generalActiveTab">
+            <br />
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    @await Component.InvokeAsync("StockGeneralDetails", new { stock = Model })
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    @await Component.InvokeAsync("MarketData", new { stock = Model })
+                </div>
+            </div>
+        </div>
+        <div id="financialstatements" class="tab-pane fade @financialActiveTab">
+            <br />
+            <ul class="nav nav-pills">
+                <li class="active"><a data-toggle="pill" href="#balancesheet">Balance Sheet</a></li>
+                <li><a data-toggle="pill" href="#incomestatement">Income Statement</a></li>
+                <li><a data-toggle="pill" href="#cashflowstatement">Cash Flow Statement</a></li>
+            </ul>
+            <br />
+
+            <p>All numbers in @Model.Currency</p>
+            <a class="btn btn-primary" asp-action="Details" asp-route-id="@Model.Id" asp-route-tab="financials" asp-route-frequency="annual">Annual</a>
+            <a class="btn btn-primary" asp-action="Details" asp-route-id="@Model.Id" asp-route-tab="financials" asp-route-frequency="quarterly">Quarterly</a>
+            <br />
+            <br />
+            <div class="tab-content">
+                <div id="balancesheet" class="tab-pane fade in active">
+                    @await Component.InvokeAsync("BalanceSheet", new { stock = Model, frequency })
+                </div>
+                <div id="incomestatement" class="tab-pane fade">
+
+                    @await Component.InvokeAsync("IncomeStatement", new { stock = Model, frequency })
+                </div>
+                <div id="cashflowstatement" class="tab-pane fade">
+
+                    @await Component.InvokeAsync("CashFlowStatement", new { stock = Model, frequency })
+                </div>
+
+            </div>
+            <br />
+            @if ((await AuthorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Create)).Succeeded)
+            {
+                <form asp-action="RefreshFinancialStatements" method="Post" asp-route-id="@Model.Id">
+                    <div class="form-group text-center">
+                        <input type="submit" value="Refresh" class="btn btn-primary" />
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                </form>
+            }
+        </div>
+        <div id="valuation" class="tab-pane fade @valuationActiveTab">
+            @await Component.InvokeAsync("Valuation", new { stock = Model })
+        </div>
+
+    </div>
+</div>
+<div>
+    @if ((await AuthorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Create)).Succeeded)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> <text> |</text>
+    }
+    <a asp-action="Index">Back to List</a>
+</div>
+
