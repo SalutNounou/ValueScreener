@@ -15,7 +15,7 @@ namespace ValueScreener.Models
         {
             PageIndex = pageIndex;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-
+            if (pageIndex > TotalPages) PageIndex = TotalPages;
             this.AddRange(items);
         }
 

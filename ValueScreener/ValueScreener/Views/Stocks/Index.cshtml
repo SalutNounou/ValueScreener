@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ValueScreener.Models.Domain.Stock>
+﻿@model PaginatedList<ValueScreener.Models.Domain.Stock>
 
 @{
     ViewData["Title"] = "All Stocks";
@@ -9,28 +9,39 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form asp-action="Index" method="get">
+    <div class="form-group">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Ticker)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TickerParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Ticker</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Name</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Sector)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["SectorParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Sector</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Industry)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["IndustryParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Industry</a>
             </th>
 
             <th>
-                @Html.DisplayNameFor(model => model.Currency)
+                Currency
             </th>
-            <th>@Html.DisplayNameFor(model => model.QuotationPlace)</th>
+            <th>Quotation Place</th>
             <th>
-                @Html.DisplayNameFor(model => model.Country)
+                Country
             </th>
             <th></th>
         </tr>
@@ -51,11 +62,11 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Industry)
                 </td>
-              
+
                 <td>
                     @Html.DisplayFor(modelItem => item.Currency)
                 </td>
-                <td>@Html.DisplayFor(modelItem=>item.QuotationPlace)</td>
+                <td>@Html.DisplayFor(modelItem => item.QuotationPlace)</td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Country)
                 </td>
@@ -68,3 +79,43 @@
         }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+
+<div class="divider"></div>
+<form asp-action="Index" method="get" asp-route-sortOrder="@ViewData["CurrentSort"]">
+
+
+    <div class="form-group">
+        <p>
+            
+                Page : @Model.PageIndex of @Model.TotalPages | GoTo :          
+                <input type="number" name="page" value="@Model.PageIndex" />         
+                <input type="hidden" name="currentFilter" value="@ViewData["CurrentFilter"]" />
+                <input type="submit" value="Go" class="btn btn-default" />         
+        </p>
+    </div>
+
+
+</form>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+

@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ValueScreener.Data;
+using ValueScreener.Models;
 using ValueScreener.Models.Domain;
 
 namespace ValueScreener.Controllers
@@ -20,9 +19,68 @@ namespace ValueScreener.Controllers
         }
 
         // GET: Stocks
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? page)
         {
-            return View(await _context.Stocks.OrderBy(s=>s.Ticker).ToListAsync());
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["TickerParm"] =
+                String.IsNullOrEmpty(sortOrder) ? "Ticker_desc" : "";
+            ViewData["NameParm"] =
+                sortOrder == "Name" ? "Name_desc" : "Name";
+            ViewData["SectorParm"] =
+                sortOrder == "Sector" ? "Sector_desc" : "Sector";
+            ViewData["IndustryParm"] =
+                sortOrder == "Industry" ? "Industry_desc" : "Industry";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+
+
+            var stocks = from s in _context.Stocks
+                select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                stocks = stocks.Where(s => s.Ticker.Contains(searchString)
+                                               || s.Name.Contains(searchString));
+            }
+
+            if (string.IsNullOrEmpty(sortOrder))
+            {
+                sortOrder = "Ticker";
+            }
+
+            bool descending = false;
+            if (sortOrder.EndsWith("_desc"))
+            {
+                sortOrder = sortOrder.Substring(0, sortOrder.Length - 5);
+                descending = true;
+            }
+
+            if (descending)
+            {
+                stocks = stocks.OrderByDescending(e => EF.Property<object>(e, sortOrder));
+            }
+            else
+            {
+                stocks = stocks.OrderBy(e => EF.Property<object>(e, sortOrder));
+            }
+
+            int pageSize = 25;
+            return View(await PaginatedList<Stock>.CreateAsync(stocks.AsNoTracking(),
+                page ?? 1, pageSize));
         }
 
         // GET: Stocks/Details/5
@@ -56,11 +114,21 @@ namespace ValueScreener.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Ticker,Name,Sector,Industry,Country,Currency,QuotationPlace")] Stock stock)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(stock);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(stock);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                //Log the error (uncomment ex variable name and write a log.
+                ModelState.AddModelError("", "Unable to save changes. " +
+                                             "Try again, and if the problem persists " +
+                                             "see your system administrator.");
             }
             return View(stock);
         }
