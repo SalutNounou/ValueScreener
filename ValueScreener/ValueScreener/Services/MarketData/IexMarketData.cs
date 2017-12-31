@@ -2,7 +2,7 @@
 
 namespace ValueScreener.Services.MarketData
 {
-    public class IexMarketData : IServiceMarketData
+    public class IexMarketData : IMarketData
     {
         public string Symbol { get; set; }
         public string CompanyName { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace ValueScreener.Services.MarketData
 {
-    public interface IServiceMarketData
+    public interface IMarketData
     {
         string Symbol { get; set; }
         decimal? LatestPrice { get; set; }

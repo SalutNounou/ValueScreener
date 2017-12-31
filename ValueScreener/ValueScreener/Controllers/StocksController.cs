@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using ValueScreener.Data;
 using ValueScreener.Models;
 using ValueScreener.Models.Domain;
+using ValueScreener.Services.FinancialStatements;
 using ValueScreener.Services.MarketData;
 
 namespace ValueScreener.Controllers
@@ -14,12 +14,14 @@ namespace ValueScreener.Controllers
     public class StocksController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMarketDataService _marketDataService;
+        private readonly IStockMarketDataUpdater _stockMarketDataUpdater;
+        private readonly IFinancialStatementService _financialStatementService;
 
-        public StocksController(ApplicationDbContext context, IMarketDataService marketDataService)
+        public StocksController(ApplicationDbContext context, IStockMarketDataUpdater stockMarketDataUpdater, IFinancialStatementService financialStatementService)
         {
             _context = context;
-            _marketDataService = marketDataService;
+            _stockMarketDataUpdater = stockMarketDataUpdater;
+            _financialStatementService = financialStatementService;
         }
 
         // GET: Stocks
@@ -101,6 +103,10 @@ namespace ValueScreener.Controllers
             {
                 return NotFound();
             }
+           
+            //var statements = await _financialStatementService.GetFinancialStatementsAsync(stock.Ticker);
+            //if(statements!=null && statements.Any())
+            //ViewData["NetIncome"] = statements.First().IncomeStatement.NetIncome;
             return View(stock);
         }
         [HttpPost]
@@ -117,20 +123,17 @@ namespace ValueScreener.Controllers
             {
                 return NotFound();
             }
-           
-            var marketData = await _marketDataService.GetMarketDataAsync(stock.Ticker);
-            if (marketData != null)
+            try
             {
-                stock.MarketData = new MarketData
-                {
-                    LastPrice = marketData.LatestPrice,
-                    MarketCapitalization = marketData.MarketCap
-                };
-                if (marketData.LatestPrice.HasValue && marketData.MarketCap.HasValue)
-                    stock.MarketData.OutstandingShares = (long)Math.Floor(marketData.MarketCap.Value / marketData.LatestPrice.Value);
-                await _context.SaveChangesAsync();
+                await _stockMarketDataUpdater.UpdateStockMarketDataAsync(stock, _context);
             }
-            return RedirectToAction(nameof(Details), new{id=id});
+            catch (DbUpdateException )
+            {                
+                ModelState.AddModelError("", "Unable to save changes. " +
+                                             "Try again, and if the problem persists " +
+                                             "see your system administrator.");
+            }
+            return RedirectToAction(nameof(Details), new {id });
         }
 
 
@@ -194,7 +197,7 @@ namespace ValueScreener.Controllers
                 return NotFound();
             }
             var stockToUpdate = await _context.Stocks.SingleOrDefaultAsync(s => s.Id == id);
-            if (await TryUpdateModelAsync<Stock>(
+            if (await TryUpdateModelAsync(
                 stockToUpdate,
                 "",
                 s => s.Ticker, s => s.Name, s => s.Country, s=>s.Currency, s=>s.QuotationPlace, s=>s.Industry, s=>s.Sector))
@@ -263,13 +266,8 @@ namespace ValueScreener.Controllers
             catch (DbUpdateException /* ex */)
             {
                 //Log the error (uncomment ex variable name and write a log.)
-                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true });
+                return RedirectToAction(nameof(Delete), new {id, saveChangesError = true });
             }
-        }
-
-        private bool StockExists(int id)
-        {
-            return _context.Stocks.Any(e => e.Id == id);
         }
     }
 }

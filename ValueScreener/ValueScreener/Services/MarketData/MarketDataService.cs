@@ -10,7 +10,7 @@ namespace ValueScreener.Services.MarketData
 
        
 
-        public async Task<IServiceMarketData> GetMarketDataAsync(string stockTicker)
+        public async Task<IMarketData> GetMarketDataAsync(string stockTicker)
         {
             try
             {

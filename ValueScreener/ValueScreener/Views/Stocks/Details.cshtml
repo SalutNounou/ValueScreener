@@ -82,11 +82,11 @@
 }
                         </dd>
                     </dl>
-                    <form asp-action="RefreshMarketData" method="Post">
+                    <form asp-action="RefreshMarketData" method="Post" asp-route-id="@Model.Id">
                         <div class="form-group text-center">
                             <input type="submit" value="Refresh" class="btn btn-default" />
-                            <input type="hidden" value="@Model.Id" name="id" />
                         </div>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     </form>
                 </div>
             </div>
@@ -97,6 +97,4 @@
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
-<div>
-    <p>@ViewData["MarketData"]</p>
-</div>
+
