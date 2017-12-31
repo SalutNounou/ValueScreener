@@ -4,51 +4,99 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<h2>@Html.DisplayFor(model => model.Name)</h2>
 
 <div>
-    <h4>Stock</h4>
+
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Ticker)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Ticker)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Sector)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Sector)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Industry)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Industry)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Country)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Country)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Currency)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Currency)
-        </dd>
-    </dl>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">General Info</div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Ticker)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Ticker)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Sector)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Sector)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Industry)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Industry)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Country)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Country)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Currency)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Currency)
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Market Data</div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>Last Price</dt>
+                        <dd class="text-success">
+                            @if (Model.MarketData != null)
+                            {
+                                @Html.DisplayFor(model => model.MarketData.LastPrice) @: @Model.Currency
+                            }
+                        </dd>
+                        <dt>Shares Outstanding</dt>
+                        <dd>
+                            @if (Model.MarketData != null)
+                            {
+                                @Html.DisplayFor(model => model.MarketData.OutstandingShares)
+                            }
+                        </dd>
+                        <dt>Market Capitalization</dt>
+                        <dd>
+                            @if (Model.MarketData != null)
+    {
+                        @Html.DisplayFor(model => model.MarketData.MarketCapitalization) @: @Model.Currency
+}
+                        </dd>
+                    </dl>
+                    <form asp-action="RefreshMarketData" method="Post">
+                        <div class="form-group text-center">
+                            <input type="submit" value="Refresh" class="btn btn-default" />
+                            <input type="hidden" value="@Model.Id" name="id" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
+</div>
+<div>
+    <p>@ViewData["MarketData"]</p>
 </div>

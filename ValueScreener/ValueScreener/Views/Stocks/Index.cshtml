@@ -51,10 +51,10 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Ticker)
+                    <a asp-action="Details" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.Ticker)</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    <a asp-action="Details" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.Name)</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Sector)
@@ -66,13 +66,14 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Currency)
                 </td>
-                <td>@Html.DisplayFor(modelItem => item.QuotationPlace)</td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuotationPlace)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Country)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>
@@ -92,11 +93,11 @@
 
     <div class="form-group">
         <p>
-            
-                Page : @Model.PageIndex of @Model.TotalPages | GoTo :          
-                <input type="number" name="page" value="@Model.PageIndex" />         
-                <input type="hidden" name="currentFilter" value="@ViewData["CurrentFilter"]" />
-                <input type="submit" value="Go" class="btn btn-default" />         
+
+            Page : @Model.PageIndex of @Model.TotalPages | GoTo :
+            <input type="number" name="page" value="@Model.PageIndex" />
+            <input type="hidden" name="currentFilter" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Go" class="btn btn-default" />
         </p>
     </div>
 

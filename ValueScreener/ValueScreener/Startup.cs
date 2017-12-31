@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ValueScreener.Data;
 using ValueScreener.Models;
 using ValueScreener.Services;
+using ValueScreener.Services.MarketData;
 
 namespace ValueScreener
 {
@@ -35,6 +36,7 @@ namespace ValueScreener
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IMarketDataService, MarketDataService>();
 
             services.AddMvc();
         }
