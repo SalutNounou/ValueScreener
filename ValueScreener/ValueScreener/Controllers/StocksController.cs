@@ -97,7 +97,14 @@ namespace ValueScreener.Controllers
                 return NotFound();
             }
 
-            var stock = await _context.Stocks.Include(s=>s.MarketData)
+            var stock = await _context.Stocks
+                .Include(s=>s.MarketData)
+                .Include(s => s.FinancialStatements)
+                    .ThenInclude(f => f.BalanceSheet)
+                .Include(s => s.FinancialStatements)
+                    .ThenInclude(f => f.IncomeStatement)
+                .Include(s => s.FinancialStatements)
+                    .ThenInclude(f => f.CashFlowStatement)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (stock == null)
             {
@@ -117,7 +124,9 @@ namespace ValueScreener.Controllers
             {
                 return NotFound();
             }
-            var stock = await _context.Stocks.Include(s => s.MarketData)
+            var stock = await _context.Stocks
+                .Include(s => s.MarketData)
+                
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (stock == null)
             {
