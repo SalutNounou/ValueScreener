@@ -12,9 +12,9 @@ namespace ValueScreener.Data
 
             //Look for any Stocks.
             if (context.Stocks.Any())
-                {
-                    return;   // DB has been seeded
-                }
+            {
+                return;   // DB has been seeded
+            }
 
             foreach (var contextStock in context.Stocks)
             {
@@ -6800,12 +6800,15 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmace
 
             };
 
-            foreach (var s in stocks)
+            foreach (var stock in stocks)
             {
-                if (!s.Ticker.Contains("^") && !context.Stocks.Any(x=>x.Ticker==s.Ticker))
-                    context.Stocks.Add(s);
+                if (!stock.Ticker.Contains("^") && !context.Stocks.Any(x => x.Ticker == stock.Ticker))
+                {
+                    context.Stocks.Add(stock);
+                    context.SaveChanges();
+                }
             }
-            context.SaveChanges();
+            //context.SaveChanges();
 
 
 

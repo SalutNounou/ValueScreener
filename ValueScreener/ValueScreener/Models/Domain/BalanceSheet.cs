@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ValueScreener.Models.Domain
 {
@@ -59,5 +60,43 @@ namespace ValueScreener.Models.Domain
         public decimal TotalStockHolderEquity { get; set; }
         [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
         public decimal TreasuryStock { get; set; }
+        [NotMapped]
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal RealOtherCurrentAssets
+        {
+            get
+            {
+                if (OtherCurrentAssets > 0) return OtherCurrentAssets;
+                return TotalCurrentAssets - CashCashEquivalentAndShortTermInvestments - InventoriesNet -
+                       TotalReceivableNet;
+            }
+        }
+
+        [NotMapped]
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal RealDeferredCharges
+        {
+            get
+            {
+                if (DeferredCharges > 0) return DeferredCharges;
+                return TotalAssets - TotalCurrentAssets - PropertyPlantEquipmentNet - Goodwill - IntangibleAssets - OtherAssets 
+                       ;
+            }
+        }
+
+        [NotMapped]
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal AccountPayables
+        {
+            get { return TotalCurrentLiabilities - TotalShortTermDebt - OtherCurrentLiabilities; }
+        }
+
+        [NotMapped]
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal CapitalSurplus
+        {
+            get { return TotalStockHolderEquity +CommonStock +PreferredStock - RetainedEarnings - TreasuryStock; }
+        }
+
     }
 }

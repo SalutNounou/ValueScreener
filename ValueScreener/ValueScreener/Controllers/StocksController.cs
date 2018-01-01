@@ -145,6 +145,40 @@ namespace ValueScreener.Controllers
             return RedirectToAction(nameof(Details), new {id });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RefreshFinancialStatements(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var stock = await _context.Stocks
+                .Include(s => s.FinancialStatements)
+
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (stock == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var statements = await _financialStatementService.GetFinancialStatementsAsync(stock.Ticker);
+                if (statements != null && statements.Any())
+                    stock.FinancialStatements = statements;
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "Unable to save changes. " +
+                                             "Try again, and if the problem persists " +
+                                             "see your system administrator.");
+            }
+            return RedirectToAction(nameof(Details), new {id});
+
+        }
+
 
         // GET: Stocks/Create
         public IActionResult Create()
@@ -278,5 +312,7 @@ namespace ValueScreener.Controllers
                 return RedirectToAction(nameof(Delete), new {id, saveChangesError = true });
             }
         }
+
+       
     }
 }
