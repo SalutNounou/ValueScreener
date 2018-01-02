@@ -16,14 +16,37 @@ namespace ValueScreener.Data
                 return;   // DB has been seeded
             }
 
-            foreach (var contextStock in context.Stocks)
+            //foreach (var contextStock in context.Stocks)
+            //{
+            //    context.Stocks.Remove(contextStock);
+            //}
+
+
+
+
+            foreach (var stock in stockAmex)
             {
-                context.Stocks.Remove(contextStock);
+                if (!stock.Ticker.Contains("^") && !context.Stocks.Any(x => x.Ticker == stock.Ticker))
+                {
+                    context.Stocks.Add(stock);
+                    context.SaveChanges();
+                }
             }
 
-            var stocks = new Stock[]
-            {
-                new Stock{Country = "United States", Currency = "USD",Industry = "Computer Software: Prepackaged Software", Name = "3D Systems Corporation", Ticker = "DDD", Sector = "Technology", QuotationPlace="New York Stock Exchange"},
+          
+
+
+           
+
+           
+            //context.SaveChanges();
+
+
+
+        }
+
+        private static readonly Stock[] stocksNYSE = new Stock[]
+            { new Stock{Country = "United States", Currency = "USD",Industry = "Computer Software: Prepackaged Software", Name = "3D Systems Corporation", Ticker = "DDD", Sector = "Technology", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Medical/Dental Instruments", Name = "3M Company", Ticker = "MMM", Sector = "Health Care", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Services-Misc. Amusement & Recreation", Name = "500.com Limited", Ticker = "WBAI", Sector = "Consumer Services", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Computer Software: Programming, Data Processing", Name = "58.com Inc.", Ticker = "WUBA", Sector = "Technology", QuotationPlace="New York Stock Exchange"},
@@ -3156,7 +3179,8 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Major Banks", 
 new Stock{Country = "United States", Currency = "USD",Industry = "Restaurants", Name = "Zoe's Kitchen, Inc.", Ticker = "ZOES", Sector = "Consumer Services", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Zoetis Inc.", Ticker = "ZTS", Sector = "Health Care", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Trucking Freight/Courier Services", Name = "ZTO Express (Cayman) Inc.", Ticker = "ZTO", Sector = "Transportation", QuotationPlace="New York Stock Exchange"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Zymeworks Inc.", Ticker = "ZYME", Sector = "Health Care", QuotationPlace="New York Stock Exchange"},
+            };
+        private static readonly Stock[] stocksNasdaq = new Stock[]{new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Zymeworks Inc.", Ticker = "ZYME", Sector = "Health Care", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Property-Casualty Insurers", Name = "1347 Property Insurance Holdings, Inc.", Ticker = "PIH", Sector = "Finance", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Finance/Investors Services", Name = "180 Degree Capital Corp.", Ticker = "TURN", Sector = "Finance", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Other Specialty Stores", Name = "1-800 FLOWERS.COM, Inc.", Ticker = "FLWS", Sector = "Consumer Services", QuotationPlace="Nasdaq"},
@@ -6439,8 +6463,10 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmace
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Zosano Pharma Corporation", Ticker = "ZSAN", Sector = "Health Care", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Clothing/Shoe/Accessory Stores", Name = "Zumiez Inc.", Ticker = "ZUMZ", Sector = "Consumer Services", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Zynerba Pharmaceuticals, Inc.", Ticker = "ZYNE", Sector = "Health Care", QuotationPlace="Nasdaq"},
-new Stock{Country = "United States", Currency = "USD",Industry = "EDP Services", Name = "Zynga Inc.", Ticker = "ZNGA", Sector = "Technology", QuotationPlace="Nasdaq"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Farming/Seeds/Milling", Name = "22nd Century Group, Inc", Ticker = "XXII", Sector = "Consumer Non-Durables", QuotationPlace="American Stock Exchange"},
+new Stock{Country = "United States", Currency = "USD",Industry = "EDP Services", Name = "Zynga Inc.", Ticker = "ZNGA", Sector = "Technology", QuotationPlace="Nasdaq"},};
+        private static readonly Stock[] stockAmex = new Stock[]
+        {
+            new Stock{Country = "United States", Currency = "USD",Industry = "Farming/Seeds/Milling", Name = "22nd Century Group, Inc", Ticker = "XXII", Sector = "Consumer Non-Durables", QuotationPlace="American Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "n/a", Name = "Aberdeen Asia-Pacific Income Fund Inc", Ticker = "FAX", Sector = "n/a", QuotationPlace="American Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "n/a", Name = "Aberdeen Australia Equity Fund Inc", Ticker = "IAF", Sector = "n/a", QuotationPlace="American Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "n/a", Name = "Aberdeen Chile Fund, Inc.", Ticker = "CH", Sector = "n/a", QuotationPlace="American Stock Exchange"},
@@ -6797,21 +6823,6 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Biotechnology:
 new Stock{Country = "United States", Currency = "USD",Industry = "Oil & Gas Production", Name = "Yuma Energy, Inc.", Ticker = "YUMA", Sector = "Energy", QuotationPlace="American Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Computer Software: Prepackaged Software", Name = "Zedge, Inc.", Ticker = "ZDGE", Sector = "Technology", QuotationPlace="American Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Zomedica Pharmaceuticals Corp.", Ticker = "ZOM", Sector = "Health Care", QuotationPlace="American Stock Exchange"},
-
-            };
-
-            foreach (var stock in stocks)
-            {
-                if (!stock.Ticker.Contains("^") && !context.Stocks.Any(x => x.Ticker == stock.Ticker))
-                {
-                    context.Stocks.Add(stock);
-                    context.SaveChanges();
-                }
-            }
-            //context.SaveChanges();
-
-
-
-        }
+        };
     }
 }
