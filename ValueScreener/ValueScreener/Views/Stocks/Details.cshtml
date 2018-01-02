@@ -1,108 +1,39 @@
 ﻿@model ValueScreener.Models.Domain.Stock
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Ticker + " Details";
 }
 
 <h2>@Html.DisplayFor(model => model.Name)</h2>
 
 <div>
     <hr />
+    @{
+        var generalActive = string.IsNullOrEmpty((string)ViewData["activeTab"]) ? "active" : ((string)ViewData["activeTab"] == "general"?"active":string.Empty);
+        var generalActiveTab = generalActive == "active" ? "in active" : String.Empty;
+        var financialActive = string.IsNullOrEmpty((string)ViewData["activeTab"]) ? string.Empty : ((string)ViewData["activeTab"] == "financials"?"active":string.Empty);
+        var financialActiveTab = financialActive == "active" ? "in active" : String.Empty;
+        var valuationActive = string.IsNullOrEmpty((string)ViewData["activeTab"]) ? string.Empty : ((string)ViewData["activeTab"] == "valuation"?"active":string.Empty);
+        var valuationActiveTab = valuationActive == "active" ? "in active" : String.Empty;
+    }
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#general">General</a></li>
-        <li><a data-toggle="tab" href="#financialstatements">Financial Statements</a></li>
-        <li><a data-toggle="tab" href="#valuation">Valuation</a></li>
+        <li class="@generalActive"><a data-toggle="tab" href="#general">General</a></li>
+        <li class="@financialActive"><a data-toggle="tab" href="#financialstatements">Financial Statements</a></li>
+        <li class="@valuationActive"><a data-toggle="tab" href="#valuation">Valuation</a></li>
     </ul>
     <div class="tab-content">
-        <div id="general" class="tab-pane fade in active">
+        <div id="general" class="tab-pane fade @generalActiveTab">
             <br />
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">General Info</div>
-                        <div class="panel-body">
-                            <dl class="dl-horizontal">
-                                <dt>
-                                    @Html.DisplayNameFor(model => model.Ticker)
-                                </dt>
-                                <dd>
-                                    @Html.DisplayFor(model => model.Ticker)
-                                </dd>
-                                <dt>
-                                    @Html.DisplayNameFor(model => model.Name)
-                                </dt>
-                                <dd>
-                                    @Html.DisplayFor(model => model.Name)
-                                </dd>
-                                <dt>
-                                    @Html.DisplayNameFor(model => model.Sector)
-                                </dt>
-                                <dd>
-                                    @Html.DisplayFor(model => model.Sector)
-                                </dd>
-                                <dt>
-                                    @Html.DisplayNameFor(model => model.Industry)
-                                </dt>
-                                <dd>
-                                    @Html.DisplayFor(model => model.Industry)
-                                </dd>
-                                <dt>
-                                    @Html.DisplayNameFor(model => model.Country)
-                                </dt>
-                                <dd>
-                                    @Html.DisplayFor(model => model.Country)
-                                </dd>
-                                <dt>
-                                    @Html.DisplayNameFor(model => model.Currency)
-                                </dt>
-                                <dd>
-                                    @Html.DisplayFor(model => model.Currency)
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
+                    @await Component.InvokeAsync("StockGeneralDetails", new { stock=Model })
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Market Data</div>
-                        <div class="panel-body">
-                            <dl class="dl-horizontal">
-                                <dt>Last Price</dt>
-                                <dd class="text-success">
-                                    @if (Model.MarketData != null)
-                                    {
-                                        @Html.DisplayFor(model => model.MarketData.LastPrice)
-                                        @: @Model.Currency
-                                    }
-                                </dd>
-                                <dt>Shares Outstanding</dt>
-                                <dd>
-                                    @if (Model.MarketData != null)
-                                    {
-                                        @Html.DisplayFor(model => model.MarketData.OutstandingShares)
-                                    }
-                                </dd>
-                                <dt>Market Capitalization</dt>
-                                <dd>
-                                    @if (Model.MarketData != null)
-                                    {
-                                        @Html.DisplayFor(model => model.MarketData.MarketCapitalization)
-                                        @: @Model.Currency
-                                    }
-                                </dd>
-                            </dl>
-                            <form asp-action="RefreshMarketData" method="Post" asp-route-id="@Model.Id">
-                                <div class="form-group text-center">
-                                    <input type="submit" value="Refresh" class="btn btn-primary" />
-                                </div>
-                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            </form>
-                        </div>
-                    </div>
+                    @await Component.InvokeAsync("MarketData", new { stock=Model })
                 </div>
             </div>
         </div>
-        <div id="financialstatements" class="tab-pane fade">
+        <div id="financialstatements" class="tab-pane fade @financialActiveTab">
             <br />
             <ul class="nav nav-pills">
                 <li class="active"><a data-toggle="pill" href="#balancesheet">Balance Sheet</a></li>
@@ -114,480 +45,15 @@
             <br />
             <div class="tab-content">
                 <div id="balancesheet" class="tab-pane fade in active">
-                    @if (Model.FinancialStatements != null)
-                    {
-                        <table class="table table-striped">
-
-                            <tr>
-                                <th>Year</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.FiscalYear)</th>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Date Released</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.ReceivedDate)</td>
-                                }
-                            </tr>
-                            <tr><th>Assets</th></tr>
-                            <tr>
-                                <th>Cash and Equivalent</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.CashAndCashEquivalent)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Cash, Equivalent and Short Term Investment</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.CashCashEquivalentAndShortTermInvestments)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Net Receivables</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.TotalReceivableNet)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Inventory</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.InventoriesNet)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Other Current Assets</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.RealOtherCurrentAssets)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Total Current Assets</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.BalanceSheet.TotalCurrentAssets)</th>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Property, Plant and Equipment</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.PropertyPlantEquipmentNet)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Goodwill</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.Goodwill)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Intangible Assets</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.IntangibleAssets)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Other Assets</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.OtherAssets)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Deferred Charges</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.RealDeferredCharges)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Total Assets</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.BalanceSheet.TotalAssets)</th>
-                                }
-                            </tr>
-                            <tr><th>Liabilities</th></tr>
-                            <tr>
-                                <th>Account Payables</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.AccountPayables)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Short Term Debt</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.TotalShortTermDebt)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Other Short Current Liabilities</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.OtherCurrentLiabilities)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Total Current Liabilities</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.BalanceSheet.TotalCurrentLiabilities)</th>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Long Term Debt</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.TotalLongTermDebt)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Minority Interest</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.MinorityInterest)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Other Liabilities</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.OtherLiabilities)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Total Liabilities</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.BalanceSheet.TotalLiabilities)</th>
-                                }
-                            </tr>
-                            <tr><th>Equity</th></tr>
-                            <tr>
-                                <th>Preferred Stock</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.PreferredStock)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Common Stock</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.CommonStock)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Retained Earnings</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.RetainedEarnings)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Treasury Stock</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.TreasuryStock)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Capital Surplus</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.CapitalSurplus)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Other Equity</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.BalanceSheet.OtherEquity)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Total Equity</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => @statement.BalanceSheet.TotalStockHolderEquity)</th>
-                                }
-                            </tr>
-                        </table>
-                    }
+                @await Component.InvokeAsync("BalanceSheet", new { stock=Model })
                 </div>
                 <div id="incomestatement" class="tab-pane fade">
-                    @if (Model.FinancialStatements != null)
-                    {
-                        <table class="table table-striped">
-                            <tr>
-                                <th>Year</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.FiscalYear)</th>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Date Released</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.ReceivedDate)</td>
-                                }
-                            </tr>
-                            <tr><th>Revenue</th></tr>
-                            <tr>
-                                <th>Total Revenue</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.TotalRevenue)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Cost of Revenue</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.CostOfRevenue)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Gross Profit</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.IncomeStatement.GrossProfit)</th>
-                                }
-                            </tr>
-                            <tr><th>Operating Expenses</th></tr>
-                            <tr>
-                                <th>Research And Development</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.ResearchDevelopementExpense)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Selling General And Administrative</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.SellingGeneralAdministrativeExpense)</td>
-                                }
-                            </tr>
 
-                            <tr>
-                                <th>Operating Income </th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.IncomeStatement.Ebit)</th>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Ebit </th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.Ebit)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Interest Expense </th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.InterestExpense)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Income Before Tax </th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.IncomeBeforeTaxes)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Tax Expense </th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.TaxExpense)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Income From Continuing Operation </th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.IncomeStatement.IncomeFromContinuingOperation)</th>
-                                }
-                            </tr>
-                            <tr><th>Non Recurring Events</th></tr>
-                            <tr>
-                                <th>Discontinued Operations </th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.DiscontinuedOperation)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Extraordinary Items</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.ExtraordinaryItems)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Net Income </th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.IncomeStatement.NetIncome)</th>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Net Income Applicable to Common Shares </th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.IncomeStatement.NetIncomeApplicableToCommon)</th>
-                                }
-                            </tr>
-                        </table>
-                    }
+                    @await Component.InvokeAsync("IncomeStatement", new { stock=Model })
                 </div>
                 <div id="cashflowstatement" class="tab-pane fade">
-                    @if (Model.FinancialStatements != null)
-                    {
-                        <table class="table table-striped">
-                            <tr>
-                                <th>Year</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.FiscalYear)</th>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Date Released</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.ReceivedDate)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Net Income</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.IncomeStatement.NetIncome)</td>
-                                }
-                            </tr>
-
-
-                            <tr>
-                                <th>Depreciation And Amortization</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.CashFlowStatement.CfDepreciationAmortization)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Change In Account Receivables</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.CashFlowStatement.ChangeInAccountReceivable)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Change In Inventories</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.CashFlowStatement.ChangeInInventories)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Change In Current Assets</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.CashFlowStatement.ChangeInCurrentAsset)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Change In Current Liabilities</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.CashFlowStatement.ChangeInCurrentLiabilities)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Total Adjustments</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.CashFlowStatement.ChangeInCurrentLiabilities)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th> Cash From Operating Activities</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.CashFlowStatement.CashFromOperatingActivities)</th>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Capital Expanditure</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.CashFlowStatement.CapitalExpanditure)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Investments</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.CashFlowStatement.InvestmentChangesNet)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Cash From Investing Activities</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.CashFlowStatement.CashFromInvestingActivities)</th>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Dividends Paid</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.CashFlowStatement.DividendsPaid)</td>
-                                }
-                            </tr>
-                            <tr>
-                                <th>Cash From Financing Activities</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.CashFlowStatement.CashFromFinancingActivities)</th>
-                                }
-                            </tr>
-
-
-
-                            <tr>
-                                <th>Effect of Exchange Rate Change</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <td>@Html.DisplayFor(model => statement.CashFlowStatement.EffectOfExchangeRateOnCash)</td>
-                                }
-                            </tr>
-
-                            <tr>
-                                <th>Change In Cash And Cash Equivalent</th>
-                                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
-                                {
-                                    <th>@Html.DisplayFor(model => statement.CashFlowStatement.NetChangeInCash)</th>
-                                }
-                            </tr>
-                        </table>
-                    }
+      
+                    @await Component.InvokeAsync("CashFlowStatement", new { stock=Model })
                 </div>
 
             </div>
@@ -599,7 +65,7 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             </form>
         </div>
-        <div id="valuation" class="tab-pane fade"></div>
+        <div id="valuation" class="tab-pane fade @valuationActiveTab"></div>
 
     </div>
 </div>

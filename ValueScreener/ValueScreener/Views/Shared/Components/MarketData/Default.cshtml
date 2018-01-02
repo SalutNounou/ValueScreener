@@ -1,0 +1,37 @@
+﻿@model ValueScreener.Models.Domain.Stock
+<div class="panel panel-default">
+    <div class="panel-heading">Market Data</div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Last Price</dt>
+            <dd class="text-success">
+                @if (Model.MarketData != null)
+                {
+                    @Html.DisplayFor(model => model.MarketData.LastPrice)
+                    @: @Model.Currency
+                }
+            </dd>
+            <dt>Shares Outstanding</dt>
+            <dd>
+                @if (Model.MarketData != null)
+                {
+                    @Html.DisplayFor(model => model.MarketData.OutstandingShares)
+                }
+            </dd>
+            <dt>Market Capitalization</dt>
+            <dd>
+                @if (Model.MarketData != null)
+                {
+                    @Html.DisplayFor(model => model.MarketData.MarketCapitalization)
+                    @: @Model.Currency
+                }
+            </dd>
+        </dl>
+        <form asp-controller="Stocks" asp-action="RefreshMarketData" method="Post" asp-route-id="@Model.Id">
+            <div class="form-group text-center">
+                <input type="submit" value="Refresh" class="btn btn-primary" />
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </form>
+    </div>
+</div>

@@ -90,8 +90,11 @@ namespace ValueScreener.Controllers
         }
 
         // GET: Stocks/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string tab)
         {
+            ViewData["activeTab"] = tab;
+            
+
             if (id == null)
             {
                 return NotFound();
@@ -175,7 +178,7 @@ namespace ValueScreener.Controllers
                                              "Try again, and if the problem persists " +
                                              "see your system administrator.");
             }
-            return RedirectToAction(nameof(Details), new {id});
+            return RedirectToAction(nameof(Details), new {id, tab= "financials" });
 
         }
 
