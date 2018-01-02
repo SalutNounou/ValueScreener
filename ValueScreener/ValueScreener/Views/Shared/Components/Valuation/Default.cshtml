@@ -1,0 +1,50 @@
+﻿@model ValueScreener.Models.ViewModels.ValuationViewModel
+
+<br/>
+@foreach (var hint in Model.Hints.Values)
+{
+    var level = hint.Level.ToString().ToLower();
+    <div class="alert alert-@level">
+       @hint.Message 
+    </div>
+    <br/>
+}
+
+<table class="table">
+    <tr><th>Net Net Indicators :</th></tr>
+    <tr>
+        <th> Net Current Asset Value</th>
+        <td>@if (Model.PricingResult != null)
+            {
+                @Html.DisplayFor(model => model.PricingResult.NetCurrentAssetValue)
+                @: @Model.Currency
+            }
+        </td>
+    </tr>
+    <tr>
+        <th> Discount on NCAV</th>
+        <td> @Html.DisplayFor(model => model.PricingResult.DiscountOnNcav) %</td>
+    </tr>
+    <tr><th>Financial Ratios :</th></tr>
+    <tr>
+        <th> Price/Earnings Ratio</th>
+        <td>
+            @Html.DisplayFor(model => model.PricingResult.PriceEarningRatio)
+        </td>
+    </tr>
+    <tr>
+        <th> Price/Sales Ratio</th>
+        <td> @Html.DisplayFor(model => model.PricingResult.PriceToSalesRatio) </td>
+    </tr>
+</table>
+<br/>
+
+   
+
+
+<form asp-controller="Stocks" asp-action="RefreshValuationCalculation" method="Post" asp-route-id="@Model.Id" asp-route-tab="valuation">
+    <div class="form-group text-center">
+        <input type="submit" value="Recalculate" class="btn btn-primary" />
+    </div>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+</form>

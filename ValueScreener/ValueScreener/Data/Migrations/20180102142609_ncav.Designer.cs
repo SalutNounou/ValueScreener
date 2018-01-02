@@ -12,9 +12,10 @@ using ValueScreener.Models.Domain;
 namespace ValueScreener.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180102142609_ncav")]
+    partial class ncav
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -404,10 +405,6 @@ namespace ValueScreener.Data.Migrations
                     b.Property<decimal>("NetCurrentAssetValue");
 
                     b.Property<int>("PiotroskiScore");
-
-                    b.Property<decimal>("PriceEarningRatio");
-
-                    b.Property<decimal>("PriceToSalesRatio");
 
                     b.Property<decimal>("ReturnOnAssets");
 

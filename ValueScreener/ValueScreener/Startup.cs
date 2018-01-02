@@ -13,6 +13,7 @@ using ValueScreener.Models;
 using ValueScreener.Services;
 using ValueScreener.Services.FinancialStatements;
 using ValueScreener.Services.MarketData;
+using ValueScreener.Services.Valuation;
 
 namespace ValueScreener
 {
@@ -40,7 +41,8 @@ namespace ValueScreener
             services.AddTransient<IMarketDataService, MarketDataService>();
             services.AddTransient<IStockMarketDataUpdater, StockMarketDataUpdater>();
             services.AddTransient<IFinancialStatementService>(s => new EdgarFinancialStatementService(Configuration["Services:EdgarApiKey"]));
-
+            services.AddTransient<IStockEvaluator, StockEvaluator>();
+            services.AddTransient<IValuationHintAnalyzer, ValuationHintAnalyzer>();
 
             services.AddMvc();
         }

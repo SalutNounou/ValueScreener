@@ -65,7 +65,9 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             </form>
         </div>
-        <div id="valuation" class="tab-pane fade @valuationActiveTab"></div>
+        <div id="valuation" class="tab-pane fade @valuationActiveTab">
+            @await Component.InvokeAsync("Valuation", new { stock=Model })
+        </div>
 
     </div>
 </div>

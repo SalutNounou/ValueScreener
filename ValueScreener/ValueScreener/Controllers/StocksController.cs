@@ -8,6 +8,7 @@ using ValueScreener.Models;
 using ValueScreener.Models.Domain;
 using ValueScreener.Services.FinancialStatements;
 using ValueScreener.Services.MarketData;
+using ValueScreener.Services.Valuation;
 
 namespace ValueScreener.Controllers
 {
@@ -16,12 +17,14 @@ namespace ValueScreener.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IStockMarketDataUpdater _stockMarketDataUpdater;
         private readonly IFinancialStatementService _financialStatementService;
+        private readonly IStockEvaluator _stockEvaluator;
 
-        public StocksController(ApplicationDbContext context, IStockMarketDataUpdater stockMarketDataUpdater, IFinancialStatementService financialStatementService)
+        public StocksController(ApplicationDbContext context, IStockMarketDataUpdater stockMarketDataUpdater, IFinancialStatementService financialStatementService, IStockEvaluator stockEvaluator)
         {
             _context = context;
             _stockMarketDataUpdater = stockMarketDataUpdater;
             _financialStatementService = financialStatementService;
+            _stockEvaluator = stockEvaluator;
         }
 
         // GET: Stocks
@@ -108,15 +111,14 @@ namespace ValueScreener.Controllers
                     .ThenInclude(f => f.IncomeStatement)
                 .Include(s => s.FinancialStatements)
                     .ThenInclude(f => f.CashFlowStatement)
+                .Include(s => s.PricingResult)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (stock == null)
             {
                 return NotFound();
             }
            
-            //var statements = await _financialStatementService.GetFinancialStatementsAsync(stock.Ticker);
-            //if(statements!=null && statements.Any())
-            //ViewData["NetIncome"] = statements.First().IncomeStatement.NetIncome;
+          
             return View(stock);
         }
         [HttpPost]
@@ -180,6 +182,45 @@ namespace ValueScreener.Controllers
             }
             return RedirectToAction(nameof(Details), new {id, tab= "financials" });
 
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RefreshValuationCalculation(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var stock = await _context.Stocks
+                .Include(s => s.MarketData)
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.BalanceSheet)
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.IncomeStatement)
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.CashFlowStatement)
+                .Include(s=>s.PricingResult)
+
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (stock == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                _stockEvaluator.EvaluateStock(stock);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "Unable to save changes. " +
+                                             "Try again, and if the problem persists " +
+                                             "see your system administrator.");
+            }
+            return RedirectToAction(nameof(Details), new { id, tab = "valuation" });
         }
 
 
