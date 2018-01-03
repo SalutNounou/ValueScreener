@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -20,11 +21,25 @@ namespace ValueScreener.Models.Domain
         public string Currency { get; set; }
 
         public MarketData MarketData { get; set; }
+        public DateTime MarketDataReceivedDate { get; set; }
+        public bool MarketDataSuccess { get; set; }
+        public DateTime AnnualStatementsReceivedDate { get; set; }
+        public bool AnnualStatementsSuccess { get; set; }
+        public DateTime QuarterlyStatementsReceivedDate { get; set; }
+        public bool QuarterlyStatementsSuccess { get; set; }
+
         public PricingResult PricingResult { get; set; }
         public List<FinancialStatement> FinancialStatements { get; set; }
         [DisplayName("Quotation Place")]
         public string QuotationPlace { get; set; }
+
+        public Stock()
+        {
+            MarketDataReceivedDate = DateTime.MinValue;
+            AnnualStatementsReceivedDate = DateTime.MinValue;
+            QuarterlyStatementsReceivedDate = DateTime.MinValue;
+        }
     }
 
- 
+
 }
