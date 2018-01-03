@@ -30,6 +30,7 @@ namespace ValueScreener.Models.Domain
         [Required]
         public string PrimarySymbol { get; set; }
 
+        public string Source { get; set; }
         public FinancialStatement()
         {
             BalanceSheet = new BalanceSheet();

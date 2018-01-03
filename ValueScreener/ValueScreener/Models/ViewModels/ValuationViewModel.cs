@@ -27,4 +27,6 @@ namespace ValueScreener.Models.ViewModels
         Warning,
         Danger
     }
+
+
 }

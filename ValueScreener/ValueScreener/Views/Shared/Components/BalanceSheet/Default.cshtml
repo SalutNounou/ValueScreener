@@ -1,4 +1,5 @@
-﻿@model ValueScreener.Models.Domain.Stock
+﻿@using ValueScreener.Models.ViewModels
+@model ValueScreener.Models.ViewModels.FinancialStatementViewModel
 
 @if (Model.FinancialStatements != null)
 {
@@ -11,11 +12,28 @@
                 <th>@Html.DisplayFor(model => statement.FiscalYear)</th>
             }
         </tr>
+        @if (Model.Frequency == StatementFrequency.Quarterly)
+        {
+            <tr>
+                <th>Quarter</th>
+                @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
+                {
+                    <td>Q @Html.DisplayFor(model => statement.FiscalQuarter)</td>
+                }
+            </tr>
+        }
         <tr>
             <th>Date Released</th>
             @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
             {
                 <td>@Html.DisplayFor(model => statement.ReceivedDate)</td>
+            }
+        </tr>
+        <tr>
+            <th>Form Type</th>
+            @foreach (var statement in Model.FinancialStatements.OrderByDescending(f => f.ReceivedDate))
+            {
+                <td>@Html.DisplayFor(model => statement.FormType)</td>
             }
         </tr>
         <tr><th>Assets</th></tr>

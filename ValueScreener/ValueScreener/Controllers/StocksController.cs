@@ -93,10 +93,10 @@ namespace ValueScreener.Controllers
         }
 
         // GET: Stocks/Details/5
-        public async Task<IActionResult> Details(int? id, string tab)
+        public async Task<IActionResult> Details(int? id, string tab, string frequency)
         {
             ViewData["activeTab"] = tab;
-            
+            ViewData["frequency"] = frequency;
 
             if (id == null)
             {
@@ -171,7 +171,10 @@ namespace ValueScreener.Controllers
             {
                 var statements = await _financialStatementService.GetFinancialStatementsAsync(stock.Ticker);
                 if (statements != null && statements.Any())
+                {
                     stock.FinancialStatements = statements;
+                    stock.FinancialStatements.AddRange(await _financialStatementService.GetQuarterlyFinancialStatementAsync(stock.Ticker));
+                }
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)

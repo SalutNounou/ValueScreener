@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using ValueScreener.Models.Domain;
@@ -11,6 +12,7 @@ namespace ValueScreener.Services.FinancialStatements
     {
         private readonly string _apiKey;
         private readonly string _serviceEntryPoint = "http://edgaronline.api.mashery.com/v2/corefinancials/ann.json?primarysymbols=";
+        private readonly string _serviceEntryPointQuarterly = "http://edgaronline.api.mashery.com/v2/corefinancials/qtr.json?primarysymbols=";
         public EdgarFinancialStatementService(string apiKey)
         {
             _apiKey = apiKey;
@@ -25,7 +27,7 @@ namespace ValueScreener.Services.FinancialStatements
                 using (System.Net.Http.HttpClient hc = new System.Net.Http.HttpClient())
                 {
                     var str= await hc.GetStringAsync(url);
-                    return ParseFinancialStatements(str);                  
+                    return ParseFinancialStatements(str,"annual");                  
                 }
             }
             catch (Exception e)
@@ -35,7 +37,26 @@ namespace ValueScreener.Services.FinancialStatements
             }
         }
 
-        private List<FinancialStatement> ParseFinancialStatements(string jsonData)
+        public async Task<IEnumerable<FinancialStatement>> GetQuarterlyFinancialStatementAsync(string stockTicker)
+        {
+            try
+            {
+
+                var url = $"{_serviceEntryPointQuarterly}{stockTicker}&appkey={_apiKey}";
+                using (System.Net.Http.HttpClient hc = new System.Net.Http.HttpClient())
+                {
+                    var str = await hc.GetStringAsync(url);
+                    return ParseFinancialStatements(str,"quarterly").Take(4);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        private List<FinancialStatement> ParseFinancialStatements(string jsonData, string frequency)
         {
             dynamic statements = JObject.Parse(jsonData);
             var results = new List<FinancialStatement>();
@@ -43,7 +64,7 @@ namespace ValueScreener.Services.FinancialStatements
             {
                 foreach (var row in statements.result.rows.Children())
                 {
-                    FinancialStatement statement = new FinancialStatement();
+                    FinancialStatement statement = new FinancialStatement{Source = frequency};
                     foreach (var entry in row.values.Children())
                     {
                         string field = entry.field;
