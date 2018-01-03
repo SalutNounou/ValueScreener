@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ValueScreener.Data;
 using ValueScreener.Models;
 using ValueScreener.Services;
+using ValueScreener.Services.Batch;
 using ValueScreener.Services.FinancialStatements;
 using ValueScreener.Services.MarketData;
 using ValueScreener.Services.Valuation;
@@ -35,6 +34,8 @@ namespace ValueScreener
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+            services.AddHangfire(config =>
+                config.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
@@ -43,8 +44,10 @@ namespace ValueScreener
             services.AddTransient<IFinancialStatementService>(s => new EdgarFinancialStatementService(Configuration["Services:EdgarApiKey"]));
             services.AddTransient<IStockEvaluator, StockEvaluator>();
             services.AddTransient<IValuationHintAnalyzer, ValuationHintAnalyzer>();
-
+            services.AddTransient<IApplicationBatchService, ApplicationBatchService>();
             services.AddMvc();
+
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,7 +66,12 @@ namespace ValueScreener
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
+
+
             app.UseAuthentication();
+
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
 
             app.UseMvc(routes =>
             {
@@ -71,6 +79,7 @@ namespace ValueScreener
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            RecurringJob.AddOrUpdate<IApplicationBatchService>("MarketDataRetrieval",service => service.RetrieveAllMArketData() , "0 */4 * * *");
         }
     }
 }

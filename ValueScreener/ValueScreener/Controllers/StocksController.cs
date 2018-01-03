@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ValueScreener.Data;
@@ -34,6 +35,7 @@ namespace ValueScreener.Controllers
             string searchString,
             int? page)
         {
+          
             ViewData["CurrentSort"] = sortOrder;
             ViewData["TickerParm"] =
                 String.IsNullOrEmpty(sortOrder) ? "Ticker_desc" : "";
