@@ -8,11 +8,11 @@ namespace ValueScreener.Services.Valuation
     {
         public void EvaluateStock(Stock stock)
         {
-            if (stock == null) return;
-            if (stock.MarketData == null) return;
-            if (stock.FinancialStatements == null || !stock.FinancialStatements.Any()) return;
+            if (stock == null) return ;
+            if (stock.MarketData == null) return ;
+            if (stock.FinancialStatements == null || !stock.FinancialStatements.Any()) return ;
             var pricingResults = new PricingResult();
-            var lastFinancialStatement = stock.FinancialStatements.OrderByDescending(x => x.FiscalYear).First();
+            var lastFinancialStatement = stock.FinancialStatements.OrderByDescending(x => x.FiscalYear).ThenByDescending(f=>f.FiscalQuarter).First();
             var averageStatement = GetAverageStatement(stock.FinancialStatements);
             EvaluateNcaV(lastFinancialStatement, pricingResults, stock.MarketData);
             EvaluatePER(lastFinancialStatement, pricingResults, stock.MarketData);
@@ -25,7 +25,7 @@ namespace ValueScreener.Services.Valuation
                 stockMarketData.MarketCapitalization.HasValue)
                 pricingResults.PriceEarningRatio = (decimal) (stockMarketData.MarketCapitalization)
                                                    / lastFinancialStatement.IncomeStatement.NetIncomeApplicableToCommon;
-            if (stockMarketData.MarketCapitalization.HasValue)
+            if (stockMarketData.MarketCapitalization.HasValue && lastFinancialStatement.IncomeStatement.TotalRevenue!=0)
                 pricingResults.PriceToSalesRatio = (decimal)stockMarketData.MarketCapitalization/lastFinancialStatement.IncomeStatement.TotalRevenue;
         }
 

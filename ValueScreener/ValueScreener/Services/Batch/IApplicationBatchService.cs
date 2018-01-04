@@ -6,6 +6,7 @@ using ValueScreener.Data;
 using ValueScreener.Models.Domain;
 using ValueScreener.Services.FinancialStatements;
 using ValueScreener.Services.MarketData;
+using ValueScreener.Services.Valuation;
 
 namespace ValueScreener.Services.Batch
 {
@@ -13,7 +14,8 @@ namespace ValueScreener.Services.Batch
     {
         Task RetrieveAllMArketData();
         Task RetrieveAllFinancialStatements(int whichDecile,StatementFrequency frequency);
-        
+        Task ReevaluateAllStocks();
+
     }
 
     public class ApplicationBatchService : IApplicationBatchService
@@ -21,12 +23,14 @@ namespace ValueScreener.Services.Batch
         private readonly IStockMarketDataUpdater _stockMarketDataUpdater;
         private readonly ApplicationDbContext _context;
         private readonly IFinancialStatementUpdater _financialStatementUpdater;
+        private readonly IStockEvaluator _stockEvaluator;
 
-        public ApplicationBatchService(ApplicationDbContext context, IStockMarketDataUpdater stockMarketDataUpdater, IFinancialStatementUpdater financialStatementUpdater)
+        public ApplicationBatchService(ApplicationDbContext context, IStockMarketDataUpdater stockMarketDataUpdater, IFinancialStatementUpdater financialStatementUpdater, IStockEvaluator stockEvaluator)
         {
             _context = context;
             _stockMarketDataUpdater = stockMarketDataUpdater;
             _financialStatementUpdater = financialStatementUpdater;
+            _stockEvaluator = stockEvaluator;
         }
 
 
@@ -52,7 +56,20 @@ namespace ValueScreener.Services.Batch
             await _context.SaveChangesAsync();
         }
 
-     
+        public async Task ReevaluateAllStocks()
+        {
+            var stocks = _context.Stocks
+                .Include(s => s.MarketData)
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.BalanceSheet)
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.IncomeStatement)
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.CashFlowStatement)
+                .Include(s => s.PricingResult);
+            await stocks.ForEachAsync(stock => _stockEvaluator.EvaluateStock(stock));
+            await _context.SaveChangesAsync();
+        }
 
 
         public static readonly  Dictionary<int, List<char>> StockGroups = new Dictionary<int, List<char>>

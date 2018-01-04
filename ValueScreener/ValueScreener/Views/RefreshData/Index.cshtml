@@ -1,11 +1,11 @@
 ﻿
-<br/>
+<br />
 
-<br/>
-<form asp-controller="RefreshData" asp-action="RefreshMarketData" method="Post" >
+<br />
+<form asp-controller="RefreshData" asp-action="RefreshMarketData" method="Post">
     <div class="form-group">
         <input type="submit" value="Refresh Market Data" class="btn btn-primary" />
-    </div>  
+    </div>
 </form>
 <form asp-controller="RefreshData" asp-action="DeleteMarketData" method="Post">
     <div class="form-group">
@@ -20,5 +20,15 @@
 <form asp-controller="RefreshData" asp-action="DeleteFinancialStatements" method="Post">
     <div class="form-group">
         <input type="submit" value="Delete Financial Statements" class="btn btn-primary" />
+    </div>
+</form>
+<form asp-controller="RefreshData" asp-action="RefreshPricingResults" method="Post">
+    <div class="form-group">
+        <input type="submit" value="Refresh  Valuations" class="btn btn-primary" />
+    </div>
+</form>
+<form asp-controller="RefreshData" asp-action="DeleteValuations" method="Post">
+    <div class="form-group">
+        <input type="submit" value="Delete Valuations" class="btn btn-primary" />
     </div>
 </form>

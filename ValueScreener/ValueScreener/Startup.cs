@@ -103,6 +103,7 @@ namespace ValueScreener
             RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval8", service => service.RetrieveAllFinancialStatements(8, StatementFrequency.Quarterly), "05 14 */1 * *");
             RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval9", service => service.RetrieveAllFinancialStatements(9, StatementFrequency.Quarterly), "10 14 */1 * *");
             RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval10", service => service.RetrieveAllFinancialStatements(10, StatementFrequency.Quarterly), "15 14 */1 * *");
+            RecurringJob.AddOrUpdate<IApplicationBatchService>("EvaluateAllStocks", service => service.ReevaluateAllStocks(), "15 17 */1 * *");
 
         }
     }

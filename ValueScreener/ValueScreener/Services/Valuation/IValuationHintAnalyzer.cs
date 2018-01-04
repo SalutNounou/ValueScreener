@@ -23,9 +23,9 @@ namespace ValueScreener.Services.Valuation
             {
                 hints.Add("PER", new Hint { Level = AlertLevel.Success, Message = "The Price To Earnings Ratio is equal to " + pricingResult.PriceEarningRatio + ". A P/E ratio inferior to 10 is often an indicator that the stock is undervalued." });
             }
-            if (pricingResult.PriceEarningRatio > 25)
+            if (pricingResult.PriceEarningRatio > 23)
             {
-                hints.Add("PER", new Hint { Level = AlertLevel.Warning, Message = "The Price To Earnings Ratio is equal to " + pricingResult.PriceEarningRatio + ". A P/E ratio superior to 25 is often an indicator that the stock may be overvalued." });
+                hints.Add("PER", new Hint { Level = AlertLevel.Warning, Message = "The Price To Earnings Ratio is equal to " + pricingResult.PriceEarningRatio + ". A P/E ratio superior to 23 is often an indicator that the stock may be overvalued." });
             }
             if (pricingResult.PriceToSalesRatio > 8)
             {
