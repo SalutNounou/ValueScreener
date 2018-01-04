@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ValueScreener.Models.Domain;
 using ValueScreener.Models.ViewModels;
-using StatementFrequency = ValueScreener.Models.Domain.StatementFrequency;
 
 namespace ValueScreener.ViewComponents
 {
@@ -15,7 +14,7 @@ namespace ValueScreener.ViewComponents
             var viewModel = new FinancialStatementViewModel
             {
                 FinancialStatements = stock.FinancialStatements.Where(f => f.Source == frequency).ToList(),
-                Frequency = frequency == "quarterly" ? Models.ViewModels.StatementFrequency.Quarterly : Models.ViewModels.StatementFrequency.Annual
+                Frequency = frequency == "quarterly" ? StatementFrequency.Quarterly : StatementFrequency.Annual
             };
 
             return View(viewModel);

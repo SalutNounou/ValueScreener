@@ -14,7 +14,7 @@ namespace ValueScreener.ViewComponents
             var viewModel = new FinancialStatementViewModel
             {
                 FinancialStatements = stock.FinancialStatements.Where(f => f.Source == frequency).ToList(),
-                Frequency = frequency == "quarterly" ? Models.ViewModels.StatementFrequency.Quarterly : Models.ViewModels.StatementFrequency.Annual
+                Frequency = frequency == "quarterly" ? StatementFrequency.Quarterly : StatementFrequency.Annual
             };
 
             return View(viewModel);

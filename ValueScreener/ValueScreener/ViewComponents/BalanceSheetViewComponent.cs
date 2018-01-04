@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ValueScreener.Models.Domain;
 using ValueScreener.Models.ViewModels;
-using StatementFrequency = ValueScreener.Models.ViewModels.StatementFrequency;
+
 
 namespace ValueScreener.ViewComponents
 {

@@ -9,9 +9,5 @@ namespace ValueScreener.Models.ViewModels
         public StatementFrequency Frequency { get; set; }
     }
 
-    public enum StatementFrequency
-    {
-        Annual,
-        Quarterly
-    }
+   
 }

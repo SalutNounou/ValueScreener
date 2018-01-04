@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using ValueScreener.Models.Domain;
@@ -22,12 +23,12 @@ namespace ValueScreener.Services.FinancialStatements
         {
             try
             {
-               
+                if (stockTicker.Contains(".")) return new List<FinancialStatement>();
                 var url = $"{_serviceEntryPoint}{stockTicker}&appkey={_apiKey}";
                 using (System.Net.Http.HttpClient hc = new System.Net.Http.HttpClient())
                 {
-                    var str= await hc.GetStringAsync(url);
-                    return ParseFinancialStatements(str,"annual");                  
+                    var str = await hc.GetStringAsync(url);
+                    return ParseFinancialStatements(str, "annual");
                 }
             }
             catch (Exception e)
@@ -41,12 +42,12 @@ namespace ValueScreener.Services.FinancialStatements
         {
             try
             {
-
+                if (stockTicker.Contains(".")) return new List<FinancialStatement>();
                 var url = $"{_serviceEntryPointQuarterly}{stockTicker}&appkey={_apiKey}";
                 using (System.Net.Http.HttpClient hc = new System.Net.Http.HttpClient())
                 {
                     var str = await hc.GetStringAsync(url);
-                    return ParseFinancialStatements(str,"quarterly").Take(4);
+                    return ParseFinancialStatements(str, "quarterly").Take(4);
                 }
             }
             catch (Exception e)
@@ -54,6 +55,48 @@ namespace ValueScreener.Services.FinancialStatements
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+
+        public async Task<IEnumerable<FinancialStatement>> GetFinancialStatementsBatch(List<string> tickers, StatementFrequency frequency)
+        {
+            tickers.RemoveAll(x => x.Contains("."));
+            if (!tickers.Any()) return new List<FinancialStatement>();
+            var url = string.Format("http://edgaronline.api.mashery.com/v2/corefinancials/{0}.json?primarysymbols={1}&limit=1000&appkey={2}",
+               frequency==StatementFrequency.Annual?"ann":"qtr", string.Join(",", tickers), _apiKey);
+            try
+            {
+                using (System.Net.Http.HttpClient hc = new System.Net.Http.HttpClient())
+                {
+                    var str = await hc.GetStringAsync(url);
+                    var statements = ParseFinancialStatements(str,
+                        frequency == StatementFrequency.Annual ? "annual" : "quarterly");
+                    return statements;
+                }
+            }
+            catch (Exception exc)
+            {
+                throw new Exception("url " + url, exc);
+            }
+        }
+
+        public async Task<IEnumerable<FinancialStatement>> GetFinancialStatementsBatchSafe(List<string> tickers, StatementFrequency frequency)
+        {
+            var errMax = 2;
+            var currErr = 0;
+            while (currErr < errMax)
+            {
+                try
+                {
+                    return await GetFinancialStatementsBatch(tickers, frequency);
+                }
+                catch (Exception)
+                {
+                    Thread.Sleep(500);
+                    currErr++;
+                }
+            }
+            return await GetFinancialStatementsBatch(tickers, frequency);
         }
 
         private List<FinancialStatement> ParseFinancialStatements(string jsonData, string frequency)
@@ -64,7 +107,7 @@ namespace ValueScreener.Services.FinancialStatements
             {
                 foreach (var row in statements.result.rows.Children())
                 {
-                    FinancialStatement statement = new FinancialStatement{Source = frequency};
+                    FinancialStatement statement = new FinancialStatement { Source = frequency };
                     foreach (var entry in row.values.Children())
                     {
                         string field = entry.field;
@@ -86,15 +129,24 @@ namespace ValueScreener.Services.FinancialStatements
           {
                 #region Metadata
                
-                {"usdconversionrate", (f,s)=>f.UsdConversionRate=Convert.ToDecimal(s, CultureInfo.InvariantCulture) },
+                {"usdconversionrate", (f,s)=>
+                    {
+                        if(s.Contains("E"))f.UsdConversionRate = Decimal.Parse(s, NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
+                         else
+                        {
+                            f.UsdConversionRate = Convert.ToDecimal(s, CultureInfo.InvariantCulture);
+                        }
 
-                {"receiveddate", (f,s)=>f.ReceivedDate=Convert.ToDateTime(s, CultureInfo.InvariantCulture) },                
+                    }
+                },
+
+                {"receiveddate", (f,s)=>f.ReceivedDate=Convert.ToDateTime(s, CultureInfo.InvariantCulture) },
                 {"periodlengthcode", (f,s)=>f.PeriodLengthCode=s },
                 {"periodlength", (f,s)=>f.PeriodLength=Convert.ToDecimal(s, CultureInfo.InvariantCulture) },
                 {"periodenddate", (f,s)=>f.PeriodEnd=Convert.ToDateTime(s,CultureInfo.InvariantCulture) },
                 {"formtype", (f,s)=>f.FormType=s },
                 {"fiscalyear", (f,s)=>f.FiscalYear=Convert.ToInt32(s) },
-                {"fiscalquarter", (f,s)=>f.FiscalQuarter=Convert.ToInt32(s) },             
+                {"fiscalquarter", (f,s)=>f.FiscalQuarter=Convert.ToInt32(s) },
                 {"currencycode", (f,s)=>f.CurrencyCode=s },
               {"primarysymbol", (f,s)=>f.PrimarySymbol=s },
                 #endregion Metadata
@@ -124,7 +176,7 @@ namespace ValueScreener.Services.FinancialStatements
                 {"discontinuedoperations", (f,s)=>f.IncomeStatement.DiscontinuedOperation=Convert.ToDecimal(s, CultureInfo.InvariantCulture) },
                 {"equityearnings", (f,s)=>f.IncomeStatement.EquityEarnings=Convert.ToDecimal(s, CultureInfo.InvariantCulture) },
 
-               
+
                 {"extraordinaryitems", (f,s)=>f.IncomeStatement.ExtraordinaryItems=Convert.ToDecimal(s, CultureInfo.InvariantCulture) },
                 {"grossprofit", (f,s)=>f.IncomeStatement.GrossProfit=Convert.ToDecimal(s, CultureInfo.InvariantCulture) },
                 {"incomebeforetaxes", (f,s)=>f.IncomeStatement.IncomeBeforeTaxes=Convert.ToDecimal(s, CultureInfo.InvariantCulture) },
