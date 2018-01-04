@@ -105,7 +105,7 @@ namespace ValueScreener.Controllers
                 return NotFound();
             }
 
-            var stock = await _context.Stocks
+            var stock = await _context.Stocks.AsNoTracking()
                 .Include(s=>s.MarketData)
                 .Include(s => s.FinancialStatements)
                     .ThenInclude(f => f.BalanceSheet)

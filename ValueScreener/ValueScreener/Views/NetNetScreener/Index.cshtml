@@ -1,0 +1,31 @@
+﻿
+@using ValueScreener.Models.Domain
+@model List<ValueScreener.Models.Domain.Stock>
+
+<br/>
+<br/>
+<div class="row">
+    <table class="table table-striped">
+        <tr>
+            <th>Ticker</th>
+            <th>Company Name</th>
+           
+            <th> Discount on NCAV %</th>
+            <th> Market Cap</th>
+            <th> Sector</th>
+           
+        </tr>
+        @foreach (var stock in Model)
+        {
+            <tr>
+                <td> <a asp-controller="Stocks" asp-action="Details" asp-route-id="@stock.Id"> @stock.Ticker  </a></td>
+                <td> <a asp-controller="Stocks" asp-action="Details" asp-route-id="@stock.Id"> @stock.Name  </a></td>
+               
+                <td> @stock.PricingResult.DiscountOnNcav</td>
+                <td> @stock.MarketData.MarketCapitalization</td>
+                <td> @stock.Sector</td>
+              
+            </tr>
+        }
+    </table>
+</div>
