@@ -81,30 +81,31 @@ namespace ValueScreener
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("MarketDataRetrieval",service => service.RetrieveAllMArketData() , "0 */4 * * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval1", service => service.RetrieveAllFinancialStatements(1,StatementFrequency.Annual), "30 11 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval2", service => service.RetrieveAllFinancialStatements(2, StatementFrequency.Annual), "35 11 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval3", service => service.RetrieveAllFinancialStatements(3, StatementFrequency.Annual), "40 11 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval4", service => service.RetrieveAllFinancialStatements(4, StatementFrequency.Annual), "45 11 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval5", service => service.RetrieveAllFinancialStatements(5, StatementFrequency.Annual), "50 11 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval6", service => service.RetrieveAllFinancialStatements(6, StatementFrequency.Annual), "55 11 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval7", service => service.RetrieveAllFinancialStatements(7, StatementFrequency.Annual), "0 12 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval8", service => service.RetrieveAllFinancialStatements(8, StatementFrequency.Annual), "05 12 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval9", service => service.RetrieveAllFinancialStatements(9, StatementFrequency.Annual), "10 12 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval10", service => service.RetrieveAllFinancialStatements(10, StatementFrequency.Annual), "15 12 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("MarketDataRetrieval",service => service.RetrieveAllMArketData() , "0 */4 * * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval1", service => service.RetrieveAllFinancialStatements(1,StatementFrequency.Annual), "30 11 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval2", service => service.RetrieveAllFinancialStatements(2, StatementFrequency.Annual), "35 11 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval3", service => service.RetrieveAllFinancialStatements(3, StatementFrequency.Annual), "40 11 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval4", service => service.RetrieveAllFinancialStatements(4, StatementFrequency.Annual), "45 11 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval5", service => service.RetrieveAllFinancialStatements(5, StatementFrequency.Annual), "50 11 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval6", service => service.RetrieveAllFinancialStatements(6, StatementFrequency.Annual), "55 11 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval7", service => service.RetrieveAllFinancialStatements(7, StatementFrequency.Annual), "0 12 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval8", service => service.RetrieveAllFinancialStatements(8, StatementFrequency.Annual), "05 12 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval9", service => service.RetrieveAllFinancialStatements(9, StatementFrequency.Annual), "10 12 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("AnnualStatementRetrieval10", service => service.RetrieveAllFinancialStatements(10, StatementFrequency.Annual), "15 12 */1 * *");
 
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval1", service => service.RetrieveAllFinancialStatements(1, StatementFrequency.Quarterly), "30 13 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval2", service => service.RetrieveAllFinancialStatements(2, StatementFrequency.Quarterly), "35 13 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval3", service => service.RetrieveAllFinancialStatements(3, StatementFrequency.Quarterly), "40 13 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval4", service => service.RetrieveAllFinancialStatements(4, StatementFrequency.Quarterly), "45 13 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval5", service => service.RetrieveAllFinancialStatements(5, StatementFrequency.Quarterly), "50 13 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval6", service => service.RetrieveAllFinancialStatements(6, StatementFrequency.Quarterly), "55 13 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrlStatementRetrieval7", service => service.RetrieveAllFinancialStatements(7, StatementFrequency.Quarterly), "0 14 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval8", service => service.RetrieveAllFinancialStatements(8, StatementFrequency.Quarterly), "05 14 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval9", service => service.RetrieveAllFinancialStatements(9, StatementFrequency.Quarterly), "10 14 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval10", service => service.RetrieveAllFinancialStatements(10, StatementFrequency.Quarterly), "15 14 */1 * *");
-            RecurringJob.AddOrUpdate<IApplicationBatchService>("EvaluateAllStocks", service => service.ReevaluateAllStocks(), "15 17 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval1", service => service.RetrieveAllFinancialStatements(1, StatementFrequency.Quarterly), "30 13 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval2", service => service.RetrieveAllFinancialStatements(2, StatementFrequency.Quarterly), "35 13 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval3", service => service.RetrieveAllFinancialStatements(3, StatementFrequency.Quarterly), "40 13 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval4", service => service.RetrieveAllFinancialStatements(4, StatementFrequency.Quarterly), "45 13 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval5", service => service.RetrieveAllFinancialStatements(5, StatementFrequency.Quarterly), "50 13 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval6", service => service.RetrieveAllFinancialStatements(6, StatementFrequency.Quarterly), "55 13 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrlStatementRetrieval7", service => service.RetrieveAllFinancialStatements(7, StatementFrequency.Quarterly), "0 14 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval8", service => service.RetrieveAllFinancialStatements(8, StatementFrequency.Quarterly), "05 14 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval9", service => service.RetrieveAllFinancialStatements(9, StatementFrequency.Quarterly), "10 14 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("QtrStatementRetrieval10", service => service.RetrieveAllFinancialStatements(10, StatementFrequency.Quarterly), "15 14 */1 * *");
+            //RecurringJob.AddOrUpdate<IApplicationBatchService>("EvaluateAllStocks", service => service.ReevaluateAllStocks(), "15 17 */1 * *");
 
+            RecurringJob.AddOrUpdate<IApplicationBatchService>("Retrieve Everything", service=>service.RetrieveEverything(), "45 10 */1 * *" );
         }
     }
 }

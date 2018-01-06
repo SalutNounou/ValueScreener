@@ -15,18 +15,37 @@ namespace ValueScreener.Services.Valuation
             var lastFinancialStatement = stock.FinancialStatements.OrderByDescending(x => x.FiscalYear).ThenByDescending(f=>f.FiscalQuarter).First();
             var averageStatement = GetAverageStatement(stock.FinancialStatements);
             EvaluateNcaV(lastFinancialStatement, pricingResults, stock.MarketData);
-            EvaluatePER(lastFinancialStatement, pricingResults, stock.MarketData);
+            EvaluatePER(stock.FinancialStatements, pricingResults, stock.MarketData);
             stock.PricingResult = pricingResults;
         }
 
-        private void EvaluatePER(FinancialStatement lastFinancialStatement, PricingResult pricingResults, Models.Domain.MarketData stockMarketData)
+        private void EvaluatePER(List<FinancialStatement> financialStatements, PricingResult pricingResults, Models.Domain.MarketData stockMarketData)
         {
-            if (lastFinancialStatement.IncomeStatement.NetIncomeApplicableToCommon > 0 &&
-                stockMarketData.MarketCapitalization.HasValue)
+            decimal revenue, earnings;
+            var quarterlyStatements = financialStatements.Where(x => x.Source == "quarterly").ToList();
+            var isReallyQuarterly = quarterlyStatements.Any()&& quarterlyStatements.All(x => x.FormType == "10-Q" || x.FormType == "10-K");
+            if (isReallyQuarterly)
+            {
+                revenue = quarterlyStatements.Sum(x => x.IncomeStatement.TotalRevenue);
+                earnings = quarterlyStatements.Sum(x => x.IncomeStatement.NetIncomeApplicableToCommon);
+            }
+            else
+            {
+                
+                var lastStatement = financialStatements.Where(x => x.Source == "annual")
+                    .OrderByDescending(x => x.FiscalYear).ThenByDescending(f => f.FiscalQuarter).FirstOrDefault();
+                if (lastStatement == null) return;
+                revenue = lastStatement.IncomeStatement.TotalRevenue;
+                earnings = lastStatement.IncomeStatement.NetIncomeApplicableToCommon;
+            }
+                
+
+
+            if (stockMarketData.MarketCapitalization.HasValue && earnings>0)
                 pricingResults.PriceEarningRatio = (decimal) (stockMarketData.MarketCapitalization)
-                                                   / lastFinancialStatement.IncomeStatement.NetIncomeApplicableToCommon;
-            if (stockMarketData.MarketCapitalization.HasValue && lastFinancialStatement.IncomeStatement.TotalRevenue!=0)
-                pricingResults.PriceToSalesRatio = (decimal)stockMarketData.MarketCapitalization/lastFinancialStatement.IncomeStatement.TotalRevenue;
+                                                   / (decimal)earnings;
+            if (stockMarketData.MarketCapitalization.HasValue && revenue!=0)
+                pricingResults.PriceToSalesRatio = (decimal)stockMarketData.MarketCapitalization/(decimal)revenue;
         }
 
         private FinancialStatement GetAverageStatement(List<FinancialStatement> financialStatements)

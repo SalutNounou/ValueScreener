@@ -1,8 +1,21 @@
 ﻿
 @using ValueScreener.Models.Domain
-@model List<ValueScreener.Models.Domain.Stock>
+@model ValueScreener.Models.ViewModels.NetNetScreenerViewModel
 
 <br/>
+<form asp-controller="NetNetScreener" asp-action="Index" Method="get">
+    <div class="form-group">
+        <p> <label class="control-label"> Discount Min To NCAV (%)</label> : <input type="number" name="discountMin" value="@Model.DiscountLimit"/>
+            
+                <label class="checkbox-inline"><input type="checkbox"  asp-for="IncludeHealthCareStocks"><strong>Include Health Care Stocks</strong></label>
+           
+            
+                <label class="checkbox-inline"><input type="checkbox"  asp-for="IncludeChineseStocks"><strong>Include Chinese Stocks</strong></label>
+            
+        <input type="submit" value="Screen!" class="btn btn-primary"/>
+        </p>
+    </div>
+</form>
 <br/>
 <div class="row">
     <table class="table table-striped">
@@ -15,7 +28,7 @@
             <th> Sector</th>
            
         </tr>
-        @foreach (var stock in Model)
+        @foreach (var stock in Model.Stocks)
         {
             <tr>
                 <td> <a asp-controller="Stocks" asp-action="Details" asp-route-id="@stock.Id"> @stock.Ticker  </a></td>

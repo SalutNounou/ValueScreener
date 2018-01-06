@@ -13,8 +13,10 @@ namespace ValueScreener.Services.Batch
     public interface IApplicationBatchService
     {
         Task RetrieveAllMArketData();
-        Task RetrieveAllFinancialStatements(int whichDecile,StatementFrequency frequency);
+        Task RetrieveAllFinancialStatements();
+      
         Task ReevaluateAllStocks();
+        Task RetrieveEverything();
 
     }
 
@@ -43,6 +45,15 @@ namespace ValueScreener.Services.Batch
             await _context.SaveChangesAsync();
         }
 
+        public async Task RetrieveAllFinancialStatements()
+        {
+            for (int i = 1; i <= 10; i++)
+            {
+                await RetrieveAllFinancialStatements(i, StatementFrequency.Annual);
+                await RetrieveAllFinancialStatements(i, StatementFrequency.Quarterly);
+            }
+        }
+
         public async Task RetrieveAllFinancialStatements(int whichDecile, StatementFrequency frequency)
         {
             var stocks = _context.Stocks
@@ -51,8 +62,8 @@ namespace ValueScreener.Services.Batch
                 .Include(s => s.FinancialStatements)
                 .ThenInclude(f => f.IncomeStatement)
                 .Include(s => s.FinancialStatements)
-                .ThenInclude(f => f.CashFlowStatement).Where(stock=>StockGroups[whichDecile].Any(letter=>stock.Ticker.ToUpper().StartsWith(letter)));
-            await _financialStatementUpdater.UpdateFinancialStatementsBatchAsync(stocks,frequency);
+                .ThenInclude(f => f.CashFlowStatement).Where(stock => StockGroups[whichDecile].Any(letter => stock.Ticker.ToUpper().StartsWith(letter)));
+            await _financialStatementUpdater.UpdateFinancialStatementsBatchAsync(stocks, frequency);
             await _context.SaveChangesAsync();
         }
 
@@ -71,8 +82,16 @@ namespace ValueScreener.Services.Batch
             await _context.SaveChangesAsync();
         }
 
+        public async Task RetrieveEverything()
+        {
+            await RetrieveAllMArketData();
+            await RetrieveAllFinancialStatements();
+            await ReevaluateAllStocks();
 
-        public static readonly  Dictionary<int, List<char>> StockGroups = new Dictionary<int, List<char>>
+        }
+
+
+        public static readonly Dictionary<int, List<char>> StockGroups = new Dictionary<int, List<char>>
         {
             {1,new List<char>{'A'} },
             {2,new List<char>{'B'} },
