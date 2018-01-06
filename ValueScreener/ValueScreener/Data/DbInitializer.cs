@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using ValueScreener.Models.Domain;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ValueScreener.Data
 {
@@ -15,16 +17,16 @@ namespace ValueScreener.Data
             {
                 return;   // DB has been seeded
             }
+            ImportStocks(stocksNYSE, context);
+            ImportStocks(stocksNasdaq,context);
+            ImportStocks(stockAmex, context);
 
-            //foreach (var contextStock in context.Stocks)
-            //{
-            //    context.Stocks.Remove(contextStock);
-            //}
+        }
 
-
-
-
-            foreach (var stock in stockAmex)
+        private static void ImportStocks(Stock[] stocks, ApplicationDbContext context)
+        {
+            Thread.Sleep(1000);
+            foreach (var stock in stocks)
             {
                 if (!stock.Ticker.Contains("^") && !context.Stocks.Any(x => x.Ticker == stock.Ticker))
                 {
@@ -32,17 +34,6 @@ namespace ValueScreener.Data
                     context.SaveChanges();
                 }
             }
-
-          
-
-
-           
-
-           
-            //context.SaveChanges();
-
-
-
         }
 
         private static readonly Stock[] stocksNYSE = new Stock[]
@@ -689,10 +680,10 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Business Servi
 new Stock{Country = "United States", Currency = "USD",Industry = "Other Consumer Services", Name = "China Distance Education Holdings Limited", Ticker = "DL", Sector = "Consumer Services", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Air Freight/Delivery Services", Name = "China Eastern Airlines Corporation Ltd.", Ticker = "CEA", Sector = "Transportation", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "n/a", Name = "China Fund, Inc. (The)", Ticker = "CHN", Sector = "n/a", QuotationPlace="New York Stock Exchange"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Agricultural Chemicals", Name = "China Green Agriculture, Inc.", Ticker = "CGA", Sector = "Basic Industries", QuotationPlace="New York Stock Exchange"},
+new Stock{Country = "China", Currency = "USD",Industry = "Agricultural Chemicals", Name = "China Green Agriculture, Inc.", Ticker = "CGA", Sector = "Basic Industries", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Life Insurance", Name = "China Life Insurance Company Limited", Ticker = "LFC", Sector = "Finance", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Telecommunications Equipment", Name = "China Mobile (Hong Kong) Ltd.", Ticker = "CHL", Sector = "Public Utilities", QuotationPlace="New York Stock Exchange"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Beverages (Production/Distribution)", Name = "China New Borun Corporation", Ticker = "BORN", Sector = "Consumer Non-Durables", QuotationPlace="New York Stock Exchange"},
+new Stock{Country = "China", Currency = "USD",Industry = "Beverages (Production/Distribution)", Name = "China New Borun Corporation", Ticker = "BORN", Sector = "Consumer Non-Durables", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Other Consumer Services", Name = "China Online Education Group", Ticker = "COE", Sector = "Consumer Services", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Integrated oil Companies", Name = "China Petroleum & Chemical Corporation", Ticker = "SNP", Sector = "Energy", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Finance: Consumer Services", Name = "China Rapid Finance Limited", Ticker = "XRF", Sector = "Finance", QuotationPlace="New York Stock Exchange"},
@@ -701,7 +692,7 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Telecommunicat
 new Stock{Country = "United States", Currency = "USD",Industry = "Telecommunications Equipment", Name = "China Unicom (Hong Kong) Ltd", Ticker = "CHU", Sector = "Public Utilities", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Apparel", Name = "China Xiniya Fashion Limited", Ticker = "XNY", Sector = "Consumer Non-Durables", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Industrial Machinery/Components", Name = "China Yuchai International Limited", Ticker = "CYD", Sector = "Energy", QuotationPlace="New York Stock Exchange"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Auto Parts:O.E.M.", Name = "China Zenix Auto International Limited", Ticker = "ZX", Sector = "Capital Goods", QuotationPlace="New York Stock Exchange"},
+new Stock{Country = "China", Currency = "USD",Industry = "Auto Parts:O.E.M.", Name = "China Zenix Auto International Limited", Ticker = "ZX", Sector = "Capital Goods", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Restaurants", Name = "Chipotle Mexican Grill, Inc.", Ticker = "CMG", Sector = "Consumer Services", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Hotels/Resorts", Name = "Choice Hotels International, Inc.", Ticker = "CHH", Sector = "Consumer Services", QuotationPlace="New York Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Clothing/Shoe/Accessory Stores", Name = "Christopher & Banks Corporation", Ticker = "CBK", Sector = "Consumer Services", QuotationPlace="New York Stock Exchange"},
@@ -3270,7 +3261,7 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmace
 new Stock{Country = "United States", Currency = "USD",Industry = "Air Freight/Delivery Services", Name = "Air T, Inc.", Ticker = "AIRT", Sector = "Transportation", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Air Freight/Delivery Services", Name = "Air Transport Services Group, Inc", Ticker = "ATSG", Sector = "Transportation", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Radio And Television Broadcasting And Communications Equipment", Name = "Airgain, Inc.", Ticker = "AIRG", Sector = "Technology", QuotationPlace="Nasdaq"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Advertising", Name = "AirMedia Group Inc", Ticker = "AMCN", Sector = "Technology", QuotationPlace="Nasdaq"},
+new Stock{Country = "China", Currency = "USD",Industry = "Advertising", Name = "AirMedia Group Inc", Ticker = "AMCN", Sector = "Technology", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Business Services", Name = "Akamai Technologies, Inc.", Ticker = "AKAM", Sector = "Miscellaneous", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Akari Therapeutics Plc", Ticker = "AKTX", Sector = "Health Care", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Akcea Therapeutics, Inc.", Ticker = "AKCA", Sector = "Health Care", QuotationPlace="Nasdaq"},
@@ -3772,10 +3763,10 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Movies/Enterta
 new Stock{Country = "United States", Currency = "USD",Industry = "Clothing/Shoe/Accessory Stores", Name = "Children's Place, Inc. (The)", Ticker = "PLCE", Sector = "Consumer Services", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Chimerix, Inc.", Ticker = "CMRX", Sector = "Health Care", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Engineering & Construction", Name = "China Advanced Construction Materials Group, Inc.", Ticker = "CADC", Sector = "Basic Industries", QuotationPlace="Nasdaq"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Motor Vehicles", Name = "China Auto Logistics Inc.", Ticker = "CALI", Sector = "Consumer Services", QuotationPlace="Nasdaq"},
+new Stock{Country = "China", Currency = "USD",Industry = "Motor Vehicles", Name = "China Auto Logistics Inc.", Ticker = "CALI", Sector = "Consumer Services", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Auto Parts:O.E.M.", Name = "China Automotive Systems, Inc.", Ticker = "CAAS", Sector = "Capital Goods", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Biotechnology: Biological Products (No Diagnostic Substances)", Name = "China Biologic Products Holdings, Inc.", Ticker = "CBPO", Sector = "Health Care", QuotationPlace="Nasdaq"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Building Materials", Name = "China Ceramics Co., Ltd.", Ticker = "CCCL", Sector = "Capital Goods", QuotationPlace="Nasdaq"},
+new Stock{Country = "China", Currency = "USD",Industry = "Building Materials", Name = "China Ceramics Co., Ltd.", Ticker = "CCCL", Sector = "Capital Goods", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Banks", Name = "China Commercial Credit, Inc.", Ticker = "CCCR", Sector = "Finance", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Business Services", Name = "China Customer Relations Centers, Inc.", Ticker = "CCRC", Sector = "Miscellaneous", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Investment Bankers/Brokers/Service", Name = "China Finance Online Co. Limited", Ticker = "JRJC", Sector = "Finance", QuotationPlace="Nasdaq"},
@@ -4153,7 +4144,7 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Investment Ban
 new Stock{Country = "United States", Currency = "USD",Industry = "Marine Transportation", Name = "Euroseas Ltd.", Ticker = "ESEA", Sector = "Transportation", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Oil & Gas Production", Name = "EV Energy Partners, L.P.", Ticker = "EVEP", Sector = "Energy", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Computer Software: Prepackaged Software", Name = "Everbridge, Inc.", Ticker = "EVBG", Sector = "Technology", QuotationPlace="Nasdaq"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Apparel", Name = "Ever-Glory International Group, Inc.", Ticker = "EVK", Sector = "Consumer Non-Durables", QuotationPlace="Nasdaq"},
+new Stock{Country = "China", Currency = "USD",Industry = "Apparel", Name = "Ever-Glory International Group, Inc.", Ticker = "EVK", Sector = "Consumer Non-Durables", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Semiconductors", Name = "Everspin Technologies, Inc.", Ticker = "MRAM", Sector = "Technology", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Catalog/Specialty Distribution", Name = "EVINE Live Inc.", Ticker = "EVLV", Sector = "Consumer Services", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Agricultural Chemicals", Name = "Evogene Ltd.", Ticker = "EVGN", Sector = "Basic Industries", QuotationPlace="Nasdaq"},
@@ -4518,7 +4509,7 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Major Banks", 
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Banks", Name = "Guaranty Bancshares, Inc.", Ticker = "GNTY", Sector = "Finance", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Banks", Name = "Guaranty Federal Bancshares, Inc.", Ticker = "GFED", Sector = "Finance", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Metal Fabrications", Name = "Gulf Island Fabrication, Inc.", Ticker = "GIFI", Sector = "Capital Goods", QuotationPlace="Nasdaq"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Major Chemicals", Name = "Gulf Resources, Inc.", Ticker = "GURE", Sector = "Basic Industries", QuotationPlace="Nasdaq"},
+new Stock{Country = "China", Currency = "USD",Industry = "Major Chemicals", Name = "Gulf Resources, Inc.", Ticker = "GURE", Sector = "Basic Industries", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Oil & Gas Production", Name = "Gulfport Energy Corporation", Ticker = "GPOR", Sector = "Energy", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "GW Pharmaceuticals Plc", Ticker = "GWPH", Sector = "Health Care", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Life Insurance", Name = "GWG Holdings, Inc", Ticker = "GWGH", Sector = "Finance", QuotationPlace="Nasdaq"},
@@ -4882,7 +4873,7 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Business Servi
 new Stock{Country = "United States", Currency = "USD",Industry = "Business Services", Name = "KBL Merger Corp. IV", Ticker = "KBLMR", Sector = "Finance", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Business Services", Name = "KBL Merger Corp. IV", Ticker = "KBLMU", Sector = "Finance", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Business Services", Name = "KBL Merger Corp. IV", Ticker = "KBLMW", Sector = "Finance", QuotationPlace="Nasdaq"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Apparel", Name = "KBS Fashion Group Limited", Ticker = "KBSF", Sector = "Consumer Non-Durables", QuotationPlace="Nasdaq"},
+new Stock{Country = "China", Currency = "USD",Industry = "Apparel", Name = "KBS Fashion Group Limited", Ticker = "KBSF", Sector = "Consumer Non-Durables", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "n/a", Name = "KCAP Financial, Inc.", Ticker = "KCAP", Sector = "n/a", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "n/a", Name = "KCAP Financial, Inc.", Ticker = "KCAPL", Sector = "n/a", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Savings Institutions", Name = "Kearny Financial", Ticker = "KRNY", Sector = "Finance", QuotationPlace="Nasdaq"},
@@ -5409,7 +5400,7 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Semiconductors
 new Stock{Country = "United States", Currency = "USD",Industry = "Business Services", Name = "Osprey Energy Acquisition Corp.", Ticker = "OSPR", Sector = "Finance", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Business Services", Name = "Osprey Energy Acquisition Corp.", Ticker = "OSPRU", Sector = "Finance", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Business Services", Name = "Osprey Energy Acquisition Corp.", Ticker = "OSPRW", Sector = "Finance", QuotationPlace="Nasdaq"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Steel/Iron Ore", Name = "Ossen Innovation Co., Ltd.", Ticker = "OSN", Sector = "Basic Industries", QuotationPlace="Nasdaq"},
+new Stock{Country = "China", Currency = "USD",Industry = "Steel/Iron Ore", Name = "Ossen Innovation Co., Ltd.", Ticker = "OSN", Sector = "Basic Industries", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Telecommunications Equipment", Name = "Otelco Inc.", Ticker = "OTEL", Sector = "Public Utilities", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Otonomy, Inc.", Ticker = "OTIC", Sector = "Health Care", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Savings Institutions", Name = "Ottawa Bancorp, Inc.", Ticker = "OTTW", Sector = "Finance", QuotationPlace="Nasdaq"},
@@ -5705,7 +5696,7 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmace
 new Stock{Country = "United States", Currency = "USD",Industry = "Telecommunications Equipment", Name = "Remark Holdings, Inc.", Ticker = "MARK", Sector = "Consumer Services", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Banks", Name = "Renasant Corporation", Ticker = "RNST", Sector = "Finance", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Chemicals", Name = "Renewable Energy Group, Inc.", Ticker = "REGI", Sector = "Basic Industries", QuotationPlace="Nasdaq"},
-new Stock{Country = "United States", Currency = "USD",Industry = "Farming/Seeds/Milling", Name = "Renmin Tianli Group, Inc.", Ticker = "ABAC", Sector = "Consumer Non-Durables", QuotationPlace="Nasdaq"},
+new Stock{Country = "China", Currency = "USD",Industry = "Farming/Seeds/Milling", Name = "Renmin Tianli Group, Inc.", Ticker = "ABAC", Sector = "Consumer Non-Durables", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Diversified Commercial Services", Name = "Rent-A-Center Inc.", Ticker = "RCII", Sector = "Technology", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Biotechnology: Biological Products (No Diagnostic Substances)", Name = "Repligen Corporation", Ticker = "RGEN", Sector = "Health Care", QuotationPlace="Nasdaq"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Biotechnology: Biological Products (No Diagnostic Substances)", Name = "Repros Therapeutics Inc.", Ticker = "RPRX", Sector = "Health Care", QuotationPlace="Nasdaq"},

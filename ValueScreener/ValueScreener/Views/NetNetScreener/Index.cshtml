@@ -26,6 +26,7 @@
             <th> Discount on NCAV %</th>
             <th> Market Cap</th>
             <th> Sector</th>
+            <th> Country</th>
            
         </tr>
         @foreach (var stock in Model.Stocks)
@@ -37,6 +38,7 @@
                 <td> @stock.PricingResult.DiscountOnNcav</td>
                 <td> @stock.MarketData.MarketCapitalization</td>
                 <td> @stock.Sector</td>
+                <td> @stock.Country</td>
               
             </tr>
         }

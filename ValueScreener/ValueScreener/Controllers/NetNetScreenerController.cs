@@ -33,6 +33,7 @@ namespace ValueScreener.Controllers
                             && s.MarketData.MarketCapitalization>0
                             && s.PricingResult != null
                             && s.PricingResult.NetCurrentAssetValue>0
+                            && s.Sector != "Finance"
                             && s.PricingResult.DiscountOnNcav>= defaultDiscountMin
                             && (defaultIncludeHealthCareStocks || s.Sector!="Health Care")
                             && (defaultIncludeChinesStokcs || s.Country!= "China"))
