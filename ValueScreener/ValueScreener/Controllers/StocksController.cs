@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ValueScreener.Authorization;
 using ValueScreener.Data;
 using ValueScreener.Models;
 using ValueScreener.Models.Domain;
@@ -19,16 +20,19 @@ namespace ValueScreener.Controllers
         private readonly IStockMarketDataUpdater _stockMarketDataUpdater;
         private readonly IFinancialStatementService _financialStatementService;
         private readonly IStockEvaluator _stockEvaluator;
+        private readonly IAuthorizationService _authorizationService;
 
-        public StocksController(ApplicationDbContext context, IStockMarketDataUpdater stockMarketDataUpdater, IFinancialStatementService financialStatementService, IStockEvaluator stockEvaluator)
+        public StocksController(ApplicationDbContext context, IStockMarketDataUpdater stockMarketDataUpdater, IFinancialStatementService financialStatementService, IStockEvaluator stockEvaluator, IAuthorizationService authorizationService)
         {
             _context = context;
             _stockMarketDataUpdater = stockMarketDataUpdater;
             _financialStatementService = financialStatementService;
             _stockEvaluator = stockEvaluator;
+            _authorizationService = authorizationService;
         }
 
         // GET: Stocks
+        [AllowAnonymous]
         public async Task<IActionResult> Index(
             string sortOrder,
             string currentFilter,
@@ -95,6 +99,7 @@ namespace ValueScreener.Controllers
         }
 
         // GET: Stocks/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id, string tab, string frequency)
         {
             ViewData["activeTab"] = tab;
@@ -127,6 +132,13 @@ namespace ValueScreener.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RefreshMarketData(int?id)
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
+
+
             if (id == null)
             {
                 return NotFound();
@@ -156,6 +168,11 @@ namespace ValueScreener.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RefreshFinancialStatements(int? id)
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             if (id == null)
             {
                 return NotFound();
@@ -194,6 +211,11 @@ namespace ValueScreener.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RefreshValuationCalculation(int? id)
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             if (id == null)
             {
                 return NotFound();
@@ -230,8 +252,13 @@ namespace ValueScreener.Controllers
 
 
         // GET: Stocks/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Create);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             return View();
         }
 
@@ -242,6 +269,11 @@ namespace ValueScreener.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Ticker,Name,Sector,Industry,Country,Currency,QuotationPlace")] Stock stock)
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Create);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             try
             {
                 if (ModelState.IsValid)
@@ -264,6 +296,11 @@ namespace ValueScreener.Controllers
         // GET: Stocks/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Update);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             if (id == null)
             {
                 return NotFound();
@@ -284,6 +321,11 @@ namespace ValueScreener.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPost(int ?id)
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Update);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             if (id == null)
             {
                 return NotFound();
@@ -313,6 +355,11 @@ namespace ValueScreener.Controllers
         // GET: Stocks/Delete/5
         public async Task<IActionResult> Delete(int? id, bool? saveChangesError = false)
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Delete);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             if (id == null)
             {
                 return NotFound();
@@ -341,6 +388,11 @@ namespace ValueScreener.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Delete);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             var stock = await _context.Stocks
                 .AsNoTracking()
                 .SingleOrDefaultAsync(m => m.Id == id);

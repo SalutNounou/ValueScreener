@@ -1,4 +1,6 @@
 ﻿@model ValueScreener.Models.Domain.Stock
+@using ValueScreener.Authorization
+@using ValueScreener.Models.Domain
 <div class="panel panel-default">
     <div class="panel-heading">Market Data</div>
     <div class="panel-body">
@@ -27,11 +29,14 @@
                 }
             </dd>
         </dl>
-        <form asp-controller="Stocks" asp-action="RefreshMarketData" method="Post" asp-route-id="@Model.Id">
-            <div class="form-group text-center">
-                <input type="submit" value="Refresh" class="btn btn-primary" />
-            </div>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        </form>
+        @if ((await AuthorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh)).Succeeded)
+        {
+            <form asp-controller="Stocks" asp-action="RefreshMarketData" method="Post" asp-route-id="@Model.Id">
+                <div class="form-group text-center">
+                    <input type="submit" value="Refresh" class="btn btn-primary" />
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </form>
+        }
     </div>
 </div>

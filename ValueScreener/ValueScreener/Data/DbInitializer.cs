@@ -3,6 +3,10 @@ using System.Linq;
 using ValueScreener.Models.Domain;
 using System.Threading;
 using System.Threading.Tasks;
+using ValueScreener.Authorization;
+using ValueScreener.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ValueScreener.Data
 {
@@ -6815,5 +6819,56 @@ new Stock{Country = "United States", Currency = "USD",Industry = "Oil & Gas Prod
 new Stock{Country = "United States", Currency = "USD",Industry = "Computer Software: Prepackaged Software", Name = "Zedge, Inc.", Ticker = "ZDGE", Sector = "Technology", QuotationPlace="American Stock Exchange"},
 new Stock{Country = "United States", Currency = "USD",Industry = "Major Pharmaceuticals", Name = "Zomedica Pharmaceuticals Corp.", Ticker = "ZOM", Sector = "Health Care", QuotationPlace="American Stock Exchange"},
         };
+
+        public static async Task EnsureAdminUser(IServiceProvider serviceProvider)
+        {
+            var mail = "administrator@valuescreener.com";
+            var password = "Zak0pane#Tromb0ne";
+            var adminID = await EnsureUser(serviceProvider, password, mail);
+            await EnsureRole(serviceProvider, adminID, Constants.AdministratorsRole);
+        }
+
+        private static async Task<IdentityResult> EnsureRole(IServiceProvider serviceProvider,
+            string uid, string role)
+        {
+            IServiceScopeFactory scopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
+            using (IServiceScope scope = scopeFactory.CreateScope())
+            {
+                IdentityResult ir;
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    ir = await roleManager.CreateAsync(new IdentityRole(role));
+                }
+
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+                var user = await userManager.FindByIdAsync(uid);
+
+                ir = await userManager.AddToRoleAsync(user, role);
+
+                return ir;
+            }
+        }
+
+        private static async Task<string> EnsureUser(IServiceProvider serviceProvider, string password, string mail)
+        {
+
+            IServiceScopeFactory scopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
+            using (IServiceScope scope = scopeFactory.CreateScope())
+            {
+                UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var user = await userManager.FindByNameAsync(mail);
+                if (user == null)
+                {
+                    user = new ApplicationUser { UserName = mail };
+                    await userManager.CreateAsync(user, password);
+                }
+
+                return user.Id;
+            }
+
+        }
     }
 }

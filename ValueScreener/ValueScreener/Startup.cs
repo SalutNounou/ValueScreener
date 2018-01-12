@@ -1,10 +1,13 @@
 ﻿using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ValueScreener.Authorization;
 using ValueScreener.Data;
 using ValueScreener.Models;
 using ValueScreener.Services;
@@ -38,6 +41,7 @@ namespace ValueScreener
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IAuthorizationHandler, AdministratorAuthorizationHandler>();
             services.AddTransient<IMarketDataService, MarketDataService>();
             services.AddTransient<IStockMarketDataUpdater, StockMarketDataUpdater>();
             services.AddTransient<IFinancialStatementService>(s => new EdgarFinancialStatementService(Configuration["Services:EdgarApiKey"]));
@@ -45,9 +49,15 @@ namespace ValueScreener
             services.AddTransient<IValuationHintAnalyzer, ValuationHintAnalyzer>();
             services.AddTransient<IFinancialStatementUpdater, FinancialStatementUpdater>();
             services.AddTransient<IApplicationBatchService, ApplicationBatchService>();
-            services.AddMvc();
+            services.AddMvc(config =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+            });
 
-           
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,7 +82,7 @@ namespace ValueScreener
 
             app.UseHangfireDashboard();
             app.UseHangfireServer();
-
+            DbInitializer.EnsureAdminUser(app.ApplicationServices).Wait();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
