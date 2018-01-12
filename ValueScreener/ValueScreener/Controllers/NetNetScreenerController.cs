@@ -20,6 +20,7 @@ namespace ValueScreener.Controllers
 
         public async Task<IActionResult> Index(int? discountMin, bool? includeChineseStocks, bool? includeHealthCareStocks)
         {
+            ViewData["Title"] = "Net Net Screener";
             var defaultDiscountMin = discountMin ?? 10;
             defaultDiscountMin = Math.Min(defaultDiscountMin, 100);
             defaultDiscountMin = Math.Max(defaultDiscountMin, 0);
