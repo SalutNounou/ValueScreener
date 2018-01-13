@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ValueScreener.Models;
 using ValueScreener.Models.Domain;
@@ -25,12 +21,13 @@ namespace ValueScreener.Data
         public DbSet<IncomeStatement> IncomeStatements { get; set; }
         public DbSet<CashFlowStatement> CashFlowStatements { get; set; }
         public DbSet<AnnualResult> AnnualResults { get; set; }
+        public DbSet<PiotroskiResult> PiotroskiResults { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-          
+
             builder.Entity<FinancialStatement>().HasOne(f => f.BalanceSheet).WithOne(b => b.FinancialStatement)
                 .HasForeignKey<BalanceSheet>(b => b.FinancialStatementId);
             builder.Entity<FinancialStatement>().HasOne(f => f.IncomeStatement).WithOne(b => b.FinancialStatement)
@@ -46,6 +43,8 @@ namespace ValueScreener.Data
             builder.Entity<FinancialStatement>().HasOne(f => f.Stock).WithMany(s => s.FinancialStatements);
 
             builder.Entity<AnnualResult>().HasOne(r => r.PricingResult).WithMany(p => p.AnnualResults);
+
+            builder.Entity<PiotroskiResult>().HasOne(f => f.PricingResult).WithMany(s => s.PiotroskiResults);
 
         }
     }

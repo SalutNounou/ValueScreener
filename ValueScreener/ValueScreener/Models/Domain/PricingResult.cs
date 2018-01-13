@@ -38,12 +38,25 @@ namespace ValueScreener.Models.Domain
 
 
         public List<AnnualResult> AnnualResults { get; set; }
+        public List<PiotroskiResult> PiotroskiResults { get; set; }
+    }
 
-
-        //public int PiotroskiScore { get; set; }
-
-       
-
+    public class PiotroskiResult
+    {
+        public int PiotroskiResultId { get; set; }
+        public int PricingResultId { get; set; }
+        public PricingResult PricingResult { get; set; }
+        public int Year { get; set; }
+        public int GlobalFScore { get; set; }
+        public bool PositiveReturns  { get; set; }
+        public bool PositiveOperatingCashFlow { get; set; }
+        public bool HigherReturnOnAssets { get; set; }
+        public bool GoodAccrual { get; set; }
+        public bool LowerLeverage { get; set; }
+        public bool HigherCurrentRatio { get; set; }
+        public bool NoDilutionInShares { get; set; }
+        public bool HigherGrossMargin { get; set; }
+        public bool HigherAssetTurnover { get; set; }
     }
 
     public class AnnualResult

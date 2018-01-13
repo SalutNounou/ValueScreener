@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ValueScreener.Models.Domain;
 
 namespace ValueScreener.Services.Valuation
@@ -85,6 +86,16 @@ namespace ValueScreener.Services.Valuation
         public List<FinancialStatement> GetQuarterlyStatements()
         {
             return new List<FinancialStatement>(_quarterlyFinancialStatements);
+        }
+
+        public List<FinancialStatement> GetConsecutiveAnnualStatementCouple(int from)
+        {
+            if(!_annualFinancialStatements.Any()) return  new List<FinancialStatement>();
+            if(_annualFinancialStatements.Count<from+2) return new List<FinancialStatement>();
+            var result = new List<FinancialStatement>();
+            result.Add(_annualFinancialStatements[from]);
+            result.Add(_annualFinancialStatements[from+1]);
+            return result;
         }
 
         private CashFlowStatement SumCashFlowStatement(List<CashFlowStatement> csList)

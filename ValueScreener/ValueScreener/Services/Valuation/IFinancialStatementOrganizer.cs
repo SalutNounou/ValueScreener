@@ -10,5 +10,6 @@ namespace ValueScreener.Services.Valuation
         FinancialStatement GetLastQuarterlyFinancialStatement();
         List<FinancialStatement> GetAnnualStatements();
         List<FinancialStatement> GetQuarterlyStatements();
+        List<FinancialStatement> GetConsecutiveAnnualStatementCouple(int from);
     }
 }

@@ -16,8 +16,7 @@ namespace ValueScreener.Services.Valuation
 
         public void EvaluateStock(Stock stock)
         {
-            if (stock == null) return;
-            if (stock.MarketData == null) return;
+            if (stock?.MarketData == null) return;
             if (stock.FinancialStatements == null || !stock.FinancialStatements.Any()) return;
             _statementOrganizer.Initialize(stock.FinancialStatements);
             var pricingResults = new PricingResult();
@@ -52,25 +51,7 @@ namespace ValueScreener.Services.Valuation
 
 
         private void EvaluatePer(PricingResult pricingResults, Models.Domain.MarketData stockMarketData)
-        {
-            //decimal revenue, earnings;
-            //var quarterlyStatements = financialStatements.Where(x => x.Source == "quarterly").ToList();
-            //var isReallyQuarterly = quarterlyStatements.Any() && quarterlyStatements.All(x => x.FormType == "10-Q" || x.FormType == "10-K");
-            //if (isReallyQuarterly)
-            //{
-            //    revenue = quarterlyStatements.Sum(x => x.IncomeStatement.TotalRevenue);
-            //    earnings = quarterlyStatements.Sum(x => x.IncomeStatement.NetIncomeApplicableToCommon);
-            //}
-            //else
-            //{
-
-            //    var lastStatement = financialStatements.Where(x => x.Source == "annual")
-            //        .OrderByDescending(x => x.FiscalYear).ThenByDescending(f => f.FiscalQuarter).FirstOrDefault();
-            //    if (lastStatement == null) return;
-            //    revenue = lastStatement.IncomeStatement.TotalRevenue;
-            //    earnings = lastStatement.IncomeStatement.NetIncomeApplicableToCommon;
-            //}
-
+        { 
             var lastStatement = _statementOrganizer.GetLastFinancialStatement();
             if (lastStatement == null) return;
             var revenue = lastStatement.IncomeStatement.TotalRevenue;
