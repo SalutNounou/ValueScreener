@@ -119,6 +119,7 @@ namespace ValueScreener.Controllers
                 .Include(s => s.FinancialStatements)
                     .ThenInclude(f => f.CashFlowStatement)
                 .Include(s => s.PricingResult)
+                    .ThenInclude(p=>p.AnnualResults)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (stock == null)
             {
@@ -229,6 +230,7 @@ namespace ValueScreener.Controllers
                 .Include(s => s.FinancialStatements)
                 .ThenInclude(f => f.CashFlowStatement)
                 .Include(s=>s.PricingResult)
+                .ThenInclude(p=>p.AnnualResults)
 
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (stock == null)

@@ -12,9 +12,10 @@ using ValueScreener.Models.Domain;
 namespace ValueScreener.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180112183303_removePricingSimple")]
+    partial class removePricingSimple
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,28 +179,6 @@ namespace ValueScreener.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("ValueScreener.Models.Domain.AnnualResult", b =>
-                {
-                    b.Property<int>("AnnualResultId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("PricingResultId");
-
-                    b.Property<decimal>("ReturnOnAssets");
-
-                    b.Property<decimal>("ReturnOnEquity");
-
-                    b.Property<decimal>("ReturnOnInvestedCapital");
-
-                    b.Property<int>("Year");
-
-                    b.HasKey("AnnualResultId");
-
-                    b.HasIndex("PricingResultId");
-
-                    b.ToTable("AnnualResults");
                 });
 
             modelBuilder.Entity("ValueScreener.Models.Domain.BalanceSheet", b =>
@@ -423,10 +402,6 @@ namespace ValueScreener.Data.Migrations
 
                     b.Property<decimal>("DiscountOnNcav");
 
-                    b.Property<decimal>("EnterpriseMultiple");
-
-                    b.Property<decimal>("EnterpriseValue");
-
                     b.Property<decimal>("NetCurrentAssetValue");
 
                     b.Property<decimal>("PriceEarningRatio");
@@ -526,14 +501,6 @@ namespace ValueScreener.Data.Migrations
                     b.HasOne("ValueScreener.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ValueScreener.Models.Domain.AnnualResult", b =>
-                {
-                    b.HasOne("ValueScreener.Models.Domain.PricingResult", "PricingResult")
-                        .WithMany("AnnualResults")
-                        .HasForeignKey("PricingResultId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

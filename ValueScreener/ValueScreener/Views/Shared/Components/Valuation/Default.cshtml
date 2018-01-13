@@ -1,52 +1,115 @@
 ﻿@model ValueScreener.Models.ViewModels.ValuationViewModel
 @using ValueScreener.Authorization
 @using ValueScreener.Models.Domain
-<br/>
+<br />
 @foreach (var hint in Model.Hints.Values)
 {
     var level = hint.Level.ToString().ToLower();
     <div class="alert alert-@level">
-       @hint.Message 
+        @hint.Message
     </div>
-    <br/>
+    <br />
 }
 
-<table class="table">
-    <tr><th>Net Net Indicators :</th></tr>
-    <tr>
-        <th> Net Current Asset Value</th>
-        <td>@if (Model.PricingResult != null)
+    <table class="table table-striped">
+        <tr><th>Net Net Indicators :</th></tr>
+        <tr>
+            <th> Net Current Asset Value</th>
+            <td>
+                @if (Model.PricingResult != null)
             {
                 @Html.DisplayFor(model => model.PricingResult.NetCurrentAssetValue)
                 @: @Model.Currency
+        }
+            </td>
+        </tr>
+        <tr>
+            <th> Discount on NCAV</th>
+            <td> @Html.DisplayFor(model => model.PricingResult.DiscountOnNcav) %</td>
+        </tr>
+        <tr><th>Financial Ratios :</th></tr>
+        <tr>
+            <th> Price/Earnings Ratio</th>
+            <td>
+                @Html.DisplayFor(model => model.PricingResult.PriceEarningRatio)
+            </td>
+        </tr>
+        <tr>
+            <th> Price/Sales Ratio</th>
+            <td> @Html.DisplayFor(model => model.PricingResult.PriceToSalesRatio) </td>
+        </tr>
+        <tr>
+            <th> Enterprise Value</th>
+            <td>
+                @if (Model.PricingResult != null)
+            {
+                @Html.DisplayFor(model => model.PricingResult.EnterpriseValue) @: @Model.Currency
+        }
+            </td>
+        </tr>
+        <tr>
+            <th> EV/Ebitda</th>
+            <td>
+                @if (Model.PricingResult != null)
+            {
+                @Html.DisplayFor(model => model.PricingResult.EnterpriseMultiple) 
+        }
+            </td>
+        </tr>
+    </table>
+<table class="table table-striped">
+    <tr><th>Annual Returns</th></tr>
+    <tr>
+        <th>Year</th>
+        @if (Model.PricingResult != null)
+        {
+            foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <th>@Html.DisplayFor(model => annualResult.Year)</th>
             }
-        </td>
+        }
     </tr>
     <tr>
-        <th> Discount on NCAV</th>
-        <td> @Html.DisplayFor(model => model.PricingResult.DiscountOnNcav) %</td>
+        <th>ROA</th>
+        @if (Model.PricingResult != null)
+        {
+            foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.ReturnOnAssets)  %</td>
+            }
+        }
     </tr>
-    <tr><th>Financial Ratios :</th></tr>
     <tr>
-        <th> Price/Earnings Ratio</th>
-        <td>
-            @Html.DisplayFor(model => model.PricingResult.PriceEarningRatio)
-        </td>
+        <th>ROE</th>
+        @if (Model.PricingResult != null)
+        {
+            foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.ReturnOnEquity)  %</td>
+            }
+        }
     </tr>
     <tr>
-        <th> Price/Sales Ratio</th>
-        <td> @Html.DisplayFor(model => model.PricingResult.PriceToSalesRatio) </td>
+        <th>ROIC</th>
+        @if (Model.PricingResult != null)
+        {
+            foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
+            {
+                <td>@Html.DisplayFor(model => annualResult.ReturnOnInvestedCapital)  %</td>
+            }
+        }
     </tr>
-</table>
-<br/>
 
-   
+</table>
+<br />
+
+
 
 @if ((await AuthorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Create)).Succeeded)
 {
     <form asp-controller="Stocks" asp-action="RefreshValuationCalculation" method="Post" asp-route-id="@Model.Id" asp-route-tab="valuation">
         <div class="form-group text-center">
-            <input type="submit" value="Recalculate" class="btn btn-primary"/>
+            <input type="submit" value="Recalculate" class="btn btn-primary" />
         </div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     </form>

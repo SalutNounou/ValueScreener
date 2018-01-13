@@ -77,7 +77,8 @@ namespace ValueScreener.Services.Batch
                 .ThenInclude(f => f.IncomeStatement)
                 .Include(s => s.FinancialStatements)
                 .ThenInclude(f => f.CashFlowStatement)
-                .Include(s => s.PricingResult);
+                .Include(s => s.PricingResult)
+                .ThenInclude(p => p.AnnualResults);
             await stocks.ForEachAsync(stock => _stockEvaluator.EvaluateStock(stock));
             await _context.SaveChangesAsync();
         }

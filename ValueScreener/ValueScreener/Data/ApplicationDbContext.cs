@@ -24,14 +24,13 @@ namespace ValueScreener.Data
         public DbSet<BalanceSheet> BalanceSheets { get; set; }
         public DbSet<IncomeStatement> IncomeStatements { get; set; }
         public DbSet<CashFlowStatement> CashFlowStatements { get; set; }
+        public DbSet<AnnualResult> AnnualResults { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+          
             builder.Entity<FinancialStatement>().HasOne(f => f.BalanceSheet).WithOne(b => b.FinancialStatement)
                 .HasForeignKey<BalanceSheet>(b => b.FinancialStatementId);
             builder.Entity<FinancialStatement>().HasOne(f => f.IncomeStatement).WithOne(b => b.FinancialStatement)
@@ -45,6 +44,8 @@ namespace ValueScreener.Data
                 .HasForeignKey<PricingResult>(p => p.StockId);
 
             builder.Entity<FinancialStatement>().HasOne(f => f.Stock).WithMany(s => s.FinancialStatements);
+
+            builder.Entity<AnnualResult>().HasOne(r => r.PricingResult).WithMany(p => p.AnnualResults);
 
         }
     }

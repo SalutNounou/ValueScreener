@@ -45,6 +45,7 @@ namespace ValueScreener
             services.AddTransient<IMarketDataService, MarketDataService>();
             services.AddTransient<IStockMarketDataUpdater, StockMarketDataUpdater>();
             services.AddTransient<IFinancialStatementService>(s => new EdgarFinancialStatementService(Configuration["Services:EdgarApiKey"]));
+            services.AddTransient<IFinancialStatementOrganizer, FinancialStatementOrganizer>();
             services.AddTransient<IStockEvaluator, StockEvaluator>();
             services.AddTransient<IValuationHintAnalyzer, ValuationHintAnalyzer>();
             services.AddTransient<IFinancialStatementUpdater, FinancialStatementUpdater>();
