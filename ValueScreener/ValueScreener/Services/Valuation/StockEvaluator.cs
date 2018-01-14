@@ -24,8 +24,11 @@ namespace ValueScreener.Services.Valuation
             EvaluatePer(pricingResults, stock.MarketData);
             EvaluateEnterpriseMultiple(pricingResults, stock.MarketData);
             pricingResults.AnnualResults = GetAnnualResults();
+            pricingResults.PiotroskiResults = GetPiotroskiResults();
             stock.PricingResult = pricingResults;
         }
+
+
 
         private void EvaluateEnterpriseMultiple(PricingResult pricingResults, Models.Domain.MarketData stockMarketData)
         {
@@ -43,7 +46,7 @@ namespace ValueScreener.Services.Valuation
 
             var ebitda = financialStatement.IncomeStatement.Ebit +
                          financialStatement.CashFlowStatement.CfDepreciationAmortization;
-            if (ebitda >= 0)
+            if (ebitda > 0)
             {
                 pricingResults.EnterpriseMultiple = enterpriseValue / ebitda;
             }
@@ -51,7 +54,7 @@ namespace ValueScreener.Services.Valuation
 
 
         private void EvaluatePer(PricingResult pricingResults, Models.Domain.MarketData stockMarketData)
-        { 
+        {
             var lastStatement = _statementOrganizer.GetLastFinancialStatement();
             if (lastStatement == null) return;
             var revenue = lastStatement.IncomeStatement.TotalRevenue;
@@ -65,7 +68,7 @@ namespace ValueScreener.Services.Valuation
                 pricingResults.PriceToSalesRatio = (decimal)stockMarketData.MarketCapitalization / revenue;
         }
 
-       
+
 
         private void EvaluateNcaV(PricingResult pricingResults, Models.Domain.MarketData marketData)
         {
@@ -89,20 +92,13 @@ namespace ValueScreener.Services.Valuation
                 var annualResult = new AnnualResult
                 {
                     Year = financialStatement.FiscalYear,
-                    ReturnOnAssets = CalculateRoa(financialStatement),
+                    ReturnOnAssets = GetRoa(financialStatement)??0,
                     ReturnOnEquity = CalculateRoe(financialStatement),
                     ReturnOnInvestedCapital = CalculateRoic(financialStatement)
                 };
                 annualResults.Add(annualResult);
             }
             return annualResults;
-        }
-
-        private decimal CalculateRoa(FinancialStatement financialStatement)
-        {
-            if (financialStatement.IncomeStatement.NetIncomeApplicableToCommon <= 0) return 0;
-            if (financialStatement.BalanceSheet.TotalAssets <= 0) return 0;
-            return financialStatement.IncomeStatement.NetIncomeApplicableToCommon / financialStatement.BalanceSheet.TotalAssets * 100;
         }
 
 
@@ -135,7 +131,132 @@ namespace ValueScreener.Services.Valuation
             return nopat / investedCapital * 100;
         }
 
+        private List<PiotroskiResult> GetPiotroskiResults()
+        {
+            var piotroskiResults = new List<PiotroskiResult>();
+            var yearFrom = 0;
+            var statements = _statementOrganizer.GetConsecutiveAnnualStatementCouple(yearFrom);
+            while (statements.Any())
+            {
+                piotroskiResults.Add(GetPiotroskiResult(statements));
+                yearFrom++;
+                statements = _statementOrganizer.GetConsecutiveAnnualStatementCouple(yearFrom);
+            }
+            return piotroskiResults;
+        }
 
+        private PiotroskiResult GetPiotroskiResult(List<FinancialStatement> statements)
+        {
+            if (statements == null || statements.Count != 2) return new PiotroskiResult();
+            var result = new PiotroskiResult
+            {
+                Year = statements[0].FiscalYear,
+                PositiveReturns = statements[0].IncomeStatement.NetIncome > 0,
+                PositiveOperatingCashFlow = statements[0].CashFlowStatement.CashFromOperatingActivities > 0,
+                NoDilutionInShares = false,
+                HigherAssetTurnover = HasHigherAssetTurnover(statements),
+                GoodAccrual = HasGoodAccrual(statements[0]),
+                HigherCurrentRatio = HasHigherCurrentRatio(statements),
+                HigherGrossMargin = HasHigherGrossMargin(statements),
+                HigherReturnOnAssets = HasHigherReturnOnAssets(statements),
+                LowerLeverage = HasLowerLeverage(statements)
+            };
 
+            result.GlobalFScore = (result.GoodAccrual ? 1 : 0)
+            + (result.HigherCurrentRatio ? 1 : 0)
+            + (result.HigherAssetTurnover ? 1 : 0)
+            + (result.HigherGrossMargin ? 1 : 0)
+            + (result.HigherReturnOnAssets ? 1 : 0)
+            + (result.LowerLeverage ? 1 : 0)
+            + (result.NoDilutionInShares ? 1 : 0)
+            + (result.PositiveOperatingCashFlow ? 1 : 0)
+            + (result.PositiveReturns ? 1 : 0);
+
+            return result;
+        }
+
+        private bool HasGoodAccrual(FinancialStatement statement)
+        {
+            return statement.CashFlowStatement.CashFromOperatingActivities >
+                   statement.IncomeStatement.NetIncomeApplicableToCommon;
+        }
+
+        private bool HasHigherCurrentRatio(List<FinancialStatement> statements)
+        {
+            if (statements == null || statements.Count != 2) return false;
+            var currentRatioThisYear = GetCurrenRatio(statements[0]);
+            var currentRatioLastYear = GetCurrenRatio(statements[1]);
+            return currentRatioLastYear.HasValue && currentRatioThisYear.HasValue &&
+                currentRatioThisYear > currentRatioLastYear;
+        }
+
+        private decimal? GetCurrenRatio(FinancialStatement financialStatement)
+        {
+            if (financialStatement.BalanceSheet.TotalCurrentLiabilities == 0) return null;
+            return financialStatement.BalanceSheet.TotalCurrentAssets /
+                   financialStatement.BalanceSheet.TotalCurrentLiabilities;
+        }
+
+        private bool HasHigherAssetTurnover(List<FinancialStatement> statements)
+        {
+            if (statements == null || statements.Count != 2) return false;
+            var assetTurnoverThisYear = GetAssetTurnover(statements[0]);
+            var assetTurnoverLastYear = GetAssetTurnover(statements[1]);
+            return assetTurnoverLastYear.HasValue && assetTurnoverThisYear.HasValue &&
+                assetTurnoverThisYear > assetTurnoverLastYear;
+        }
+
+        private decimal? GetAssetTurnover(FinancialStatement financialStatement)
+        {
+            if (financialStatement.BalanceSheet.TotalAssets == 0) return null;
+            return financialStatement.IncomeStatement.TotalRevenue / financialStatement.BalanceSheet.TotalAssets;
+        }
+
+        private bool HasHigherGrossMargin(List<FinancialStatement> statements)
+        {
+            if (statements == null || statements.Count != 2) return false;
+            var grossMarginThisYear = GetGrossMargin(statements[0]);
+            var grossMarginLastYear = GetGrossMargin(statements[1]);
+            return grossMarginLastYear.HasValue && grossMarginThisYear.HasValue &&
+                grossMarginThisYear > grossMarginLastYear;
+        }
+
+        private decimal? GetGrossMargin(FinancialStatement financialStatement)
+        {
+            if (financialStatement.IncomeStatement.TotalRevenue == 0) return null;
+            return financialStatement.IncomeStatement.GrossProfit / financialStatement.IncomeStatement.TotalRevenue;
+        }
+
+        private bool HasHigherReturnOnAssets(List<FinancialStatement> statements)
+        {
+            if (statements == null || statements.Count != 2) return false;
+            var roaThisYear = GetRoa(statements[0]);
+            var roaLastYear = GetRoa(statements[1]);
+            return roaLastYear.HasValue && roaThisYear.HasValue &&
+                roaThisYear > roaLastYear;
+        }
+
+        private decimal? GetRoa(FinancialStatement financialStatement)
+        {
+            if (financialStatement.BalanceSheet.TotalAssets == 0) return null;
+            return financialStatement.IncomeStatement.NetIncomeApplicableToCommon /
+                   financialStatement.BalanceSheet.TotalAssets;
+
+        }
+
+        private bool HasLowerLeverage(List<FinancialStatement> statements)
+        {
+            if (statements == null || statements.Count != 2) return false;
+            var leverageThisYear = GetLeverage(statements[0]);
+            var leverageLastYear = GetLeverage(statements[1]);
+            return leverageLastYear.HasValue && leverageThisYear.HasValue &&
+                leverageThisYear < leverageLastYear;
+        }
+
+        private decimal? GetLeverage(FinancialStatement financialStatement)
+        {
+            if (financialStatement.BalanceSheet.TotalAssets == 0) return null;
+            return financialStatement.BalanceSheet.TotalLongTermDebt / financialStatement.BalanceSheet.TotalAssets;
+        }
     }
 }

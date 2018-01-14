@@ -118,8 +118,10 @@ namespace ValueScreener.Controllers
                     .ThenInclude(f => f.IncomeStatement)
                 .Include(s => s.FinancialStatements)
                     .ThenInclude(f => f.CashFlowStatement)
-                .Include(s => s.PricingResult)
-                    .ThenInclude(p=>p.AnnualResults)
+                    .Include(s => s.PricingResult)
+                    .ThenInclude(p => p.AnnualResults)
+                    .Include(s => s.PricingResult)
+                    .ThenInclude(p => p.PiotroskiResults)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (stock == null)
             {
