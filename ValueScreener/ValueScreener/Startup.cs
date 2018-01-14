@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ValueScreener.Authorization;
+using ValueScreener.Controllers;
+using ValueScreener.Controllers.Screeners;
 using ValueScreener.Data;
 using ValueScreener.Models;
 using ValueScreener.Services;
@@ -49,6 +51,7 @@ namespace ValueScreener
             services.AddTransient<IStockEvaluator, StockEvaluator>();
             services.AddTransient<IValuationHintAnalyzer, ValuationHintAnalyzer>();
             services.AddTransient<IFinancialStatementUpdater, FinancialStatementUpdater>();
+            services.AddSingleton<IScreenerFactory, ScreenerFactory>();
             services.AddTransient<IApplicationBatchService, ApplicationBatchService>();
             services.AddMvc(config =>
             {

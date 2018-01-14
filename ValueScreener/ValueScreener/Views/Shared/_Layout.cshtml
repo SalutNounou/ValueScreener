@@ -27,21 +27,28 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand"  style="display: flex; align-items: center">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand" style="display: flex; align-items: center">
                     <div>
-                        <img  src="/images/configuration-small.png" style="width: 40px" />
+                        <img src="/images/configuration-small.png" style="width: 40px" />
                         The Value Screener
                     </div>
                 </a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    @*<li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>*@
                     <li><a asp-area="" asp-controller="Stocks" asp-action="Index">All Stocks</a></li>
-                    <li><a asp-area="" asp-controller="NetNetScreener" asp-action="Index">Net Net Screener</a></li>
-                    <li><a asp-area="" asp-controller="Screener" asp-action="PriceToSales">Price To Sales Screener</a></li>
-                    @*<li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>*@
-                    @*<li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>*@
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            Screeners
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a asp-area="" asp-controller="NetNetScreener" asp-action="Index">Net Net Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="pricetosales"> Price To Sales Screener </a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="netnet">Net Net Screener</a></li>
+                        </ul>
+                    </li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>

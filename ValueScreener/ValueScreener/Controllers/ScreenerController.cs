@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ValueScreener.Controllers.Screeners;
 using ValueScreener.Data;
 using ValueScreener.Models;
 using ValueScreener.Models.Domain;
+using ValueScreener.Models.ViewModels;
 
 namespace ValueScreener.Controllers
 {
@@ -14,10 +14,12 @@ namespace ValueScreener.Controllers
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly IScreenerFactory _screenerFactory;
 
-        public ScreenerController(ApplicationDbContext context)
+        public ScreenerController(ApplicationDbContext context, IScreenerFactory screenerFactory)
         {
             _context = context;
+            _screenerFactory = screenerFactory;
         }
         public async Task<IActionResult> PriceToSales(int? page)
         {
@@ -35,6 +37,24 @@ namespace ValueScreener.Controllers
             var pageSize = 25;
             return View(await PaginatedList<Stock>.CreateAsync(stocks.AsNoTracking(),
                 page ?? 1, pageSize));
+        }
+
+
+        public async Task<IActionResult> Screen(string criteria, int? page)
+        {
+            if (string.IsNullOrEmpty(criteria)) return NotFound();
+            var screener = _screenerFactory.GetScreener(criteria);
+            if (screener == null) return NotFound();
+            ViewData["Title"] = screener.Name;
+            var stocks = screener.LoadStocks(_context).Where(screener.SelectionCriteria);
+            stocks = screener.Order(stocks);
+            var pageSize = 25;
+
+            var viewModel = new ScreenerViewModel()
+            {
+                Stocks = await PaginatedList<Stock>.CreateAsync(stocks.AsNoTracking(), page ?? 1, pageSize)
+            };
+            return View(viewModel);
         }
     }
 }

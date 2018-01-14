@@ -1,0 +1,65 @@
+﻿@model ValueScreener.Models.ViewModels.ScreenerViewModel
+
+<br />
+<h2>@ViewData["Title"]</h2>
+<br />
+
+
+<div class="row">
+    <table class="table table-striped">
+        <tr>
+            <th>Ticker</th>
+            <th>Company Name</th>
+
+            <th>Price To Sales Ratio</th>
+            <th> Market Cap</th>
+            <th> Sector</th>
+            <th> Country</th>
+
+        </tr>
+        @foreach (var stock in Model.Stocks)
+        {
+            <tr>
+                <td> <a asp-controller="Stocks" asp-action="Details" asp-route-id="@stock.Id"> @stock.Ticker  </a></td>
+                <td> <a asp-controller="Stocks" asp-action="Details" asp-route-id="@stock.Id"> @stock.Name  </a></td>
+
+                <td> @Html.DisplayFor(model => stock.PricingResult.PriceToSalesRatio)</td>
+                <td> @Html.DisplayFor(model => @stock.MarketData.MarketCapitalization)</td>
+                <td> @stock.Sector</td>
+                <td> @stock.Country</td>
+
+            </tr>
+        }
+    </table>
+</div>
+
+@{
+    var prevDisabled = !Model.Stocks.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.Stocks.HasNextPage ? "disabled" : "";
+}
+
+
+<div class="divider"></div>
+<form asp-action="PriceToSales" method="get">
+    <div class="form-group">
+        <p>
+            Page : @Model.Stocks.PageIndex of @Model.Stocks.TotalPages | GoTo :
+            <input type="number" name="page" value="@Model.Stocks.PageIndex" />
+            <input type="submit" value="Go" class="btn btn-default" />
+        </p>
+    </div>
+</form>
+<a asp-action="PriceToSales"
+   asp-route-page="@(Model.Stocks.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+
+
+<a asp-action="PriceToSales"
+   asp-route-page="@(Model.Stocks.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+
+
