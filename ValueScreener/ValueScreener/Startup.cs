@@ -52,6 +52,7 @@ namespace ValueScreener
             services.AddTransient<IValuationHintAnalyzer, ValuationHintAnalyzer>();
             services.AddTransient<IFinancialStatementUpdater, FinancialStatementUpdater>();
             services.AddSingleton<IScreenerFactory, ScreenerFactory>();
+            services.AddSingleton<IScreenerCellsGenerator, ScreenerCellsGenerator>();
             services.AddTransient<IApplicationBatchService, ApplicationBatchService>();
             services.AddMvc(config =>
             {

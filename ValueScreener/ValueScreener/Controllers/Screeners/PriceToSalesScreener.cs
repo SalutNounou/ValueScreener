@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using ValueScreener.Controllers.ScreenerColumns;
 using ValueScreener.Data;
 using ValueScreener.Models.Domain;
 
@@ -10,6 +12,8 @@ namespace ValueScreener.Controllers.Screeners
     public class PriceToSalesScreener : IScreener
     {
         public string Name { get { return "Price to Sales Screener"; } }
+        public List<string> Columns=> new List<string>{ColumnConstants.PriceToSales, ColumnConstants.Sector, ColumnConstants.Country};
+
         public IQueryable<Stock> LoadStocks(ApplicationDbContext context)
         {
             return context.Stocks

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using ValueScreener.Data;
@@ -12,5 +13,6 @@ namespace ValueScreener.Controllers.Screeners
         IQueryable<Stock> Order(IQueryable<Stock> stocks);
         Expression<Func<Stock,bool>> SelectionCriteria { get; }
         string Name { get; }
+        List<string> Columns { get; }
     }
 }
