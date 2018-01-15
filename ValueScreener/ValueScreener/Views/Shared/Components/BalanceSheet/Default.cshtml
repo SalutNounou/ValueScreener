@@ -225,7 +225,7 @@
             <th>Total Equity</th>
             @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
             {
-                <th>@Html.DisplayFor(model => @statement.BalanceSheet.TotalStockHolderEquity)</th>
+                <th>@Html.DisplayFor(model => @statement.BalanceSheet.RealTotalEquity)</th>
             }
         </tr>
     </table>

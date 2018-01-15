@@ -10,6 +10,64 @@ namespace ValueScreener.Controllers.ScreenerColumns
         ScreenerCellViewModel GetCell(Stock stock);
     }
 
+    public class NcavScreenerColumn : IScreenerColumn
+    {
+        public string DisplayName => ColumnConstants.NcavDisplay;
+        public ScreenerCellViewModel GetCell(Stock stock)
+        {
+            decimal ncav = 0;
+            if (stock.PricingResult != null)
+                ncav = stock.PricingResult.NetCurrentAssetValue;
+
+
+            return new ScreenerCellViewModel
+            {
+                CellKind = CellKind.Number,
+                IsBold = false,
+                IsLink = false,
+                NumberValue = ncav,
+                StockId = stock.Id
+            };
+        }
+    }
+
+    public class MarketCapScreenerColumn : IScreenerColumn
+    {
+        public string DisplayName => ColumnConstants.MarketCapDisplay;
+        public ScreenerCellViewModel GetCell(Stock stock)
+        {
+            decimal cap = 0;
+            if (stock.MarketData != null)
+                cap = stock.MarketData.MarketCapitalization??0;
+
+
+            return new ScreenerCellViewModel
+            {
+                CellKind = CellKind.Number,
+                IsBold = false,
+                IsLink = false,
+                NumberValue = cap,
+                StockId = stock.Id
+            };
+        }
+    }
+
+    public class IndustryScreenerColumn : IScreenerColumn
+    {
+        public string DisplayName => ColumnConstants.IndustryDisplay;
+        public ScreenerCellViewModel GetCell(Stock stock)
+        {
+            return new ScreenerCellViewModel
+            {
+                CellKind = CellKind.Text,
+                IsBold = false,
+                IsLink = false,
+                StringValue = stock.Industry,
+                StockId = stock.Id
+            };
+        }
+    }
+
     public class EnterpriseMultipleScreenerColumn : IScreenerColumn
     {
         public string DisplayName => ColumnConstants.EnterpriseMultipleDisplay;
@@ -82,7 +140,7 @@ namespace ValueScreener.Controllers.ScreenerColumns
             int piotroski = 0;
             if (stock.PricingResult != null && stock.PricingResult.PiotroskiResults != null &&
                 stock.PricingResult.PiotroskiResults.Any())
-                piotroski = stock.PricingResult.PiotroskiResults.OrderByDescending(x=>x.Year).First().GlobalFScore;
+                piotroski = stock.PricingResult.PiotroskiResults.OrderByDescending(x => x.Year).First().GlobalFScore;
 
 
             return new ScreenerCellViewModel
@@ -97,8 +155,8 @@ namespace ValueScreener.Controllers.ScreenerColumns
     }
 
     public class AvgRoicScreenerColumn : IScreenerColumn
-   {
-       public string DisplayName => ColumnConstants.AvgRoicDisplay;
+    {
+        public string DisplayName => ColumnConstants.AvgRoicDisplay;
         public ScreenerCellViewModel GetCell(Stock stock)
         {
             decimal roic = 0;
@@ -268,10 +326,10 @@ namespace ValueScreener.Controllers.ScreenerColumns
         {
             return new ScreenerCellViewModel
             {
-                CellKind = CellKind.Percentage,
+                CellKind = CellKind.Number,
                 IsBold = false,
                 IsLink = false,
-                PercentageValue = stock.PricingResult.PriceToSalesRatio,
+                NumberValue = stock.PricingResult.PriceToSalesRatio,
                 StockId = stock.Id
             };
         }

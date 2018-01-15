@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ValueScreener.Models.Domain
@@ -31,6 +32,24 @@ namespace ValueScreener.Models.Domain
         public decimal EnterpriseValue { get; set; }
         [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
         public decimal EnterpriseMultiple { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal CurrentRoa { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal AverageRoa { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal CurrentRoe { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal AverageRoe { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal CurrentRoic { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal AverageRoic { get; set; }
+
+
+        public int CurrentPiotroskiScore { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal AveragePiotroskiScore { get; set; }
+
 
 
         #endregion

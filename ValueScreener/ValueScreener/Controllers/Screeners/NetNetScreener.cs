@@ -16,7 +16,7 @@ namespace ValueScreener.Controllers.Screeners
             return context.Stocks
                 .Include(s => s.MarketData)
                 .Include(s => s.PricingResult)
-                .ThenInclude(p=>p.PiotroskiResults)
+                .ThenInclude(p => p.PiotroskiResults)
                 .AsNoTracking();
         }
 
@@ -34,16 +34,17 @@ namespace ValueScreener.Controllers.Screeners
                    && s.MarketData.MarketCapitalization > 0
                    && s.PricingResult != null
                    && s.PricingResult.NetCurrentAssetValue > 0
+                   && s.PricingResult.PriceToSalesRatio > 0
+                   && s.PricingResult.PriceToSalesRatio < 10
                    && s.Sector != "Finance"
-                   && s.Sector !="Health Care"
-                   && s.Country !="China"
+                   && s.Country != "China"
                    && s.PricingResult.DiscountOnNcav >= 0;
 
             }
         }
 
-        public string Name { get { return "Net-Net Screener"; } }
+        public string Name => "Net-Net Screener";
 
-        public List<string> Columns => new List<string> { ColumnConstants.NcavDiscount, ColumnConstants.Piotroski,ColumnConstants.EnterpriseMultiple,ColumnConstants.Sector, ColumnConstants.Country };
+        public List<string> Columns => new List<string> { ColumnConstants.NcavDiscount, ColumnConstants.MarketCap, ColumnConstants.Ncav, ColumnConstants.Industry, ColumnConstants.Country };
     }
 }

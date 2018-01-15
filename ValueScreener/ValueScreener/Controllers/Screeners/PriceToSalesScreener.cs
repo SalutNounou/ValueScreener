@@ -12,7 +12,7 @@ namespace ValueScreener.Controllers.Screeners
     public class PriceToSalesScreener : IScreener
     {
         public string Name { get { return "Price to Sales Screener"; } }
-        public List<string> Columns=> new List<string>{ColumnConstants.PriceToSales, ColumnConstants.Sector, ColumnConstants.Country};
+        public List<string> Columns=> new List<string>{ColumnConstants.PriceToSales,ColumnConstants.MarketCap, ColumnConstants.Sector,ColumnConstants.Industry, ColumnConstants.Country};
 
         public IQueryable<Stock> LoadStocks(ApplicationDbContext context)
         {
@@ -36,8 +36,9 @@ namespace ValueScreener.Controllers.Screeners
                             && s.MarketData.MarketCapitalization > 0
                             && s.PricingResult != null
                             && s.PricingResult.PriceToSalesRatio > 0
-                            && s.MarketData.MarketCapitalization > 10000000000
-                            && s.Sector != "Health Care";
+                            && s.Country != "China"
+                            && s.Sector != "Health Care"
+                            && s.MarketData.MarketCapitalization>1000000000;
             }
         }
     }

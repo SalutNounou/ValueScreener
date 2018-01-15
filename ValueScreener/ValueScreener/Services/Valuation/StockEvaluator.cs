@@ -24,10 +24,35 @@ namespace ValueScreener.Services.Valuation
             EvaluatePer(pricingResults, stock.MarketData);
             EvaluateEnterpriseMultiple(pricingResults, stock.MarketData);
             pricingResults.AnnualResults = GetAnnualResults();
+            PerformReturnsStatistics(pricingResults);
             pricingResults.PiotroskiResults = GetPiotroskiResults();
+            PerformPiotroskiStatistics(pricingResults);
             stock.PricingResult = pricingResults;
         }
 
+        private void PerformReturnsStatistics(PricingResult pricingResults)
+        {
+            if (pricingResults.AnnualResults.Any())
+            {
+                pricingResults.AverageRoa = pricingResults.AnnualResults.Average(x => x.ReturnOnAssets);
+                pricingResults.AverageRoe = pricingResults.AnnualResults.Average(x => x.ReturnOnEquity);
+                pricingResults.AverageRoic = pricingResults.AnnualResults.Average(x => x.ReturnOnInvestedCapital);
+                var lastResult = pricingResults.AnnualResults.OrderByDescending(x => x.Year).First();
+                pricingResults.CurrentRoa = lastResult.ReturnOnAssets;
+                pricingResults.CurrentRoe = lastResult.ReturnOnEquity;
+                pricingResults.CurrentRoic = lastResult.ReturnOnInvestedCapital;
+            }
+        }
+
+        private void PerformPiotroskiStatistics(PricingResult pricingResults)
+        {
+            if (pricingResults.PiotroskiResults.Any())
+            {
+                pricingResults.CurrentPiotroskiScore = pricingResults.PiotroskiResults.OrderByDescending(x => x.Year)
+                    .First().GlobalFScore;
+                pricingResults.AveragePiotroskiScore = (decimal)pricingResults.PiotroskiResults.Average(x => x.GlobalFScore);
+            }
+        }
 
 
         private void EvaluateEnterpriseMultiple(PricingResult pricingResults, Models.Domain.MarketData stockMarketData)
@@ -105,8 +130,8 @@ namespace ValueScreener.Services.Valuation
         private decimal CalculateRoe(FinancialStatement financialStatement)
         {
             if (financialStatement.IncomeStatement.NetIncomeApplicableToCommon <= 0) return 0;
-            if (financialStatement.BalanceSheet.TotalStockHolderEquity <= 0) return 0;
-            return financialStatement.IncomeStatement.NetIncomeApplicableToCommon / financialStatement.BalanceSheet.TotalStockHolderEquity * 100;
+            if (financialStatement.BalanceSheet.RealTotalEquity <= 0) return 0;
+            return financialStatement.IncomeStatement.NetIncomeApplicableToCommon / financialStatement.BalanceSheet.RealTotalEquity * 100;
 
         }
 
@@ -117,15 +142,13 @@ namespace ValueScreener.Services.Valuation
             var taxExpense = financialStatement.IncomeStatement.TaxExpense;
             var taxRate = taxExpense / incomeBeforeTaxes;
             var nopat = financialStatement.IncomeStatement.Ebit * (1 - taxRate);
-            //var totalAssets = financialStatement.BalanceSheet.TotalAssets;
-            //var nonDebtCurrentLiabilities = financialStatement.BalanceSheet.AccountPayables +
-            //                                financialStatement.BalanceSheet.RealOtherCurrentAssets;
-            var investedCapital = financialStatement.BalanceSheet.TotalStockHolderEquity +
+            var investedCapital = financialStatement.BalanceSheet.RealTotalEquity +
                                   financialStatement.BalanceSheet.TotalLongTermDebt +
                                   financialStatement.BalanceSheet.TotalShortTermDebt;
             var marketableSecurities = Math.Max(0,
                 financialStatement.BalanceSheet.CashCashEquivalentAndShortTermInvestments -
                 financialStatement.BalanceSheet.CashAndCashEquivalent);
+            if (financialStatement.BalanceSheet.CashAndCashEquivalent <= 0) marketableSecurities = 0;
             investedCapital -= marketableSecurities;
             if (investedCapital <= 0) return 0;
             return nopat / investedCapital * 100;
@@ -239,7 +262,7 @@ namespace ValueScreener.Services.Valuation
         private decimal? GetRoa(FinancialStatement financialStatement)
         {
             if (financialStatement.BalanceSheet.TotalAssets == 0) return null;
-            return financialStatement.IncomeStatement.NetIncomeApplicableToCommon /
+            return 100* financialStatement.IncomeStatement.NetIncomeApplicableToCommon /
                    financialStatement.BalanceSheet.TotalAssets;
 
         }

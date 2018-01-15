@@ -21,8 +21,10 @@ namespace ValueScreener.Controllers
             {ColumnConstants.PriceToSales, new PriceToSalesScreenerColumn()},
             {ColumnConstants.Country, new CountryScreenerColumn()},
             {ColumnConstants.Sector, new SectorScreenerColumn() },
+            {ColumnConstants.Industry, new IndustryScreenerColumn() },
+            {ColumnConstants.MarketCap, new MarketCapScreenerColumn() },
 
-
+            {ColumnConstants.Ncav, new NcavScreenerColumn() },
             {ColumnConstants.Roa, new RoaScreenerColumn() },
             {ColumnConstants.AvgRoa, new AvgRoaScreenerColumn() },
             {ColumnConstants.Roe, new RoeScreenerColumn()},

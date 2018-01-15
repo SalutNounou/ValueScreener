@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using ValueScreener.Controllers.Screeners
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -44,9 +45,18 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a asp-area="" asp-controller="NetNetScreener" asp-action="Index">Net Net Screener</a></li>
-                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="pricetosales"> Price To Sales Screener </a></li>
-                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="netnet">Net Net Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.NetNets">Net Net Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roa">ROA Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoa">ROA (Avg) Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Piotroski">Piotroski F-Score Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgPiotroski">Piotroski F-Score(Avg) Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.EnterpriseMultiple">EV/Ebitda Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roic">ROIC Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoic">ROIC (Avg) Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roe">ROE Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoe">ROE (Avg) Screener</a></li>
+                           <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.PriceToSales"> Price To Sales Screener </a></li>
+                           
                         </ul>
                     </li>
                 </ul>

@@ -40,7 +40,15 @@ namespace ValueScreener.Controllers.ScreenerColumns
 
         public const string EnterpriseMultiple = "enterprisemultiple";
         public const string EnterpriseMultipleDisplay = "Ev/Ebitda";
-       
+
+        public const string Industry = "industry";
+        public const string IndustryDisplay = "Industry";
+
+        public const string MarketCap = "marketcap";
+        public const string MarketCapDisplay = "Market Capitalization";
+
+        public const string Ncav = "ncav";
+        public const string NcavDisplay = "Net Current Asset Value";
 
     }
 }

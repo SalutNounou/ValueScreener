@@ -98,5 +98,12 @@ namespace ValueScreener.Models.Domain
             get { return TotalStockHolderEquity +CommonStock +PreferredStock - RetainedEarnings - TreasuryStock; }
         }
 
+        [NotMapped]
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal RealTotalEquity
+        {
+            get { return TotalAssets - TotalLiabilities; }
+        }
+
     }
 }
