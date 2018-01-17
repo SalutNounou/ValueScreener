@@ -12,6 +12,7 @@
             <li><a asp-route-page="@Model.PageIndex"
                    asp-route-criteria="@ViewData["Criteria"]"
                    asp-route-columns="@ViewData["Columns"]"
+                   asp-route-columnToken="x"
                    asp-route-columnToAdd="@column.Key">
                  @Html.DisplayFor(model => column.Value)
             </a></li>
@@ -30,6 +31,7 @@
                 <a asp-route-page="@Model.PageIndex"
                    asp-route-criteria="@ViewData["Criteria"]"
                    asp-route-columns="@ViewData["Columns"]"
+                   asp-route-columnToken="x"
                    asp-route-columnToRemove="@columnTitle.columnId">
                     <i class="fa fa-times"></i>
                 </a>
@@ -63,6 +65,7 @@
             <input type="number" name="page" value="@Model.PageIndex" />
             <input type="hidden" name="criteria" value="@ViewData["Criteria"]" />
             <input type="hidden"  name="columns" value="@ViewData["Columns"]"/>
+            <input type="hidden" name="columnToken" value="x"/>
             <input type="submit" value="Go" class="btn btn-default" />
         </p>
     </div>
@@ -71,6 +74,7 @@
    asp-route-page="@(Model.PageIndex - 1)"
    asp-route-criteria="@ViewData["Criteria"]"
    asp-route-columns="@ViewData["Columns"]"
+   asp-route-columnToken="x"
    class="btn btn-default @prevDisabled">
     Previous
 </a>
@@ -80,6 +84,7 @@
    asp-route-page="@(Model.PageIndex + 1)"
    asp-route-criteria="@ViewData["Criteria"]"
    asp-route-columns="@ViewData["Columns"]"
+   asp-route-columnToken="x"
    class="btn btn-default @nextDisabled">
     Next
 </a>

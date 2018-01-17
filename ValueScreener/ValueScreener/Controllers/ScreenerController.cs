@@ -26,12 +26,12 @@ namespace ValueScreener.Controllers
             _cellsGenerator = cellsGenerator;
         }
      
-        public async Task<IActionResult> Screen(string criteria, int? page,string columns, string columnToAdd, string columnToRemove)
+        public async Task<IActionResult> Screen(string criteria, int? page,string columns, string columnToAdd, string columnToRemove, string columnToken)
         {
             if (string.IsNullOrEmpty(criteria)) return NotFound();
             var screener = _screenerFactory.GetScreener(criteria);
             if (screener == null) return NotFound();
-            if (!ManageColumns(screener, columns, columnToAdd, columnToRemove, out var columnsTodisplay)) return NotFound();
+            if (!ManageColumns(screener, columns, columnToAdd, columnToRemove, out var columnsTodisplay, columnToken)) return NotFound();
             ViewData["Columns"] = string.Join(',',columnsTodisplay);
             ViewData["Criteria"] = criteria;
             ViewData["Title"] = screener.Name;
@@ -55,17 +55,20 @@ namespace ValueScreener.Controllers
         }
 
 
-        private bool ManageColumns(IScreener screener, string columns, string columnToAdd, string columnToRemove, out List<string> columnsTodisplay)
+        private bool ManageColumns(IScreener screener, string columns, string columnToAdd, string columnToRemove, out List<string> columnsTodisplay, string columnToken)
         {
             columnsTodisplay = new List<string>();
             if (!string.IsNullOrEmpty(columnToAdd) && !ColumnConstants.Columns.ContainsKey(columnToAdd)) return false;
             if (!string.IsNullOrEmpty(columnToRemove) && !ColumnConstants.Columns.ContainsKey(columnToRemove)) return false;
-            if (string.IsNullOrEmpty(columns) ) columnsTodisplay = screener.Columns;
+            if (string.IsNullOrEmpty(columns) && string.IsNullOrEmpty(columnToken)) columnsTodisplay = screener.Columns;
             else
             {
+                if (!string.IsNullOrEmpty(columns))
+                {
                     var currentColumns = columns.Split(',').ToList();
                     if (currentColumns.Any(x => !ColumnConstants.Columns.ContainsKey(x))) return false;
                     columnsTodisplay.AddRange(currentColumns);
+                }
             }
             if (!string.IsNullOrEmpty(columnToAdd) && !columnsTodisplay.Contains(columnToAdd)) columnsTodisplay.Add(columnToAdd);
             if (!string.IsNullOrEmpty(columnToRemove) && columnsTodisplay.Contains(columnToRemove)) columnsTodisplay.Remove(columnToRemove);

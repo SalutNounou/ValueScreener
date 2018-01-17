@@ -85,7 +85,11 @@ namespace ValueScreener
 
             app.UseAuthentication();
 
-            app.UseHangfireDashboard();
+           
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            });
             app.UseHangfireServer();
             DbInitializer.EnsureAdminUser(app.ApplicationServices).Wait();
             app.UseMvc(routes =>

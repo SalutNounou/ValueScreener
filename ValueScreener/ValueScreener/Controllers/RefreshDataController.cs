@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ValueScreener.Authorization;
 using ValueScreener.Data;
 using ValueScreener.Models.Domain;
 using ValueScreener.Services.FinancialStatements;
@@ -18,19 +20,25 @@ namespace ValueScreener.Controllers
         private readonly IStockMarketDataUpdater _stockMarketDataUpdater;
         private readonly IFinancialStatementUpdater _financialStatementUpdater;
         private readonly IStockEvaluator _stockEvaluator;
+        private readonly IAuthorizationService _authorizationService;
 
-        public RefreshDataController(ApplicationDbContext context, IStockMarketDataUpdater stockMarketDataUpdater, IFinancialStatementUpdater financialStatementUpdater, IStockEvaluator stockEvaluator)
+        public RefreshDataController(ApplicationDbContext context, IStockMarketDataUpdater stockMarketDataUpdater, IFinancialStatementUpdater financialStatementUpdater, IStockEvaluator stockEvaluator, IAuthorizationService authorizationService)
         {
             _context = context;
             _stockMarketDataUpdater = stockMarketDataUpdater;
             _financialStatementUpdater = financialStatementUpdater;
             _stockEvaluator = stockEvaluator;
+            _authorizationService = authorizationService;
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        public  async Task<IActionResult> Index()
         {
-
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             return View();
         }
 
@@ -38,6 +46,11 @@ namespace ValueScreener.Controllers
         [HttpPost]
         public async Task<IActionResult> RefreshMarketData()
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             var stocks = _context.Stocks.Include(s => s.MarketData).OrderBy(s => s.Ticker);
             try
             {
@@ -56,6 +69,11 @@ namespace ValueScreener.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteMarketData()
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             foreach (var contextMarketData in _context.MarketDatas)
             {
                 _context.Remove(contextMarketData);
@@ -66,6 +84,11 @@ namespace ValueScreener.Controllers
 
         public async Task<IActionResult> RefreshAnnualFinancialStatements()
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             var stocks = _context.Stocks
                 .Include(s => s.FinancialStatements)
                 .ThenInclude(f => f.BalanceSheet)
@@ -89,6 +112,11 @@ namespace ValueScreener.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteFinancialStatements()
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             foreach (var financialStatement in _context.FinancialStatements)
             {
                 _context.Remove(financialStatement);
@@ -100,6 +128,11 @@ namespace ValueScreener.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteValuations()
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             foreach (var pricingResult in _context.PricingResults)
             {
                 _context.Remove(pricingResult);
@@ -110,6 +143,11 @@ namespace ValueScreener.Controllers
 
         public async Task<IActionResult> RefreshPricingResults()
         {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
             var stocks = _context.Stocks
                 .Include(s => s.MarketData)
                 .Include(s => s.FinancialStatements)
