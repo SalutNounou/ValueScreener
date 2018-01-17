@@ -17,6 +17,8 @@ namespace ValueScreener.Controllers.Screeners
                 .Include(s => s.MarketData)
                 .Include(s => s.PricingResult)
                 .ThenInclude(p => p.PiotroskiResults)
+                .Include(s => s.PricingResult)
+                .ThenInclude(p => p.AnnualResults)
                 .AsNoTracking();
         }
 

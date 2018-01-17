@@ -7,13 +7,13 @@ namespace ValueScreener.Controllers
 {
     public interface IScreenerCellsGenerator
     {
-        IEnumerable<string> GetColumnTitles(List<string> screenerColumns);
+        IEnumerable<ColumnTitle> GetColumnTitles(List<string> screenerColumns);
         IEnumerable<ScreenerRowViewModel> GetRows(IEnumerable<Stock> stocks, List<string> columns);
     }
 
     public class ScreenerCellsGenerator : IScreenerCellsGenerator
     {
-        private static readonly  Dictionary<string, IScreenerColumn> Columns = new Dictionary<string, IScreenerColumn>
+        private static readonly Dictionary<string, IScreenerColumn> Columns = new Dictionary<string, IScreenerColumn>
         {
             {ColumnConstants.CompanyName, new CompanyNameScreenerColumn() },
             {ColumnConstants.Ticker , new TickerScreenerColumn()},
@@ -39,15 +39,18 @@ namespace ValueScreener.Controllers
             {ColumnConstants.Per, new PerScreenerColumn() },
         };
 
-        public IEnumerable<string> GetColumnTitles(List<string> screenerColumns)
+        public IEnumerable<ColumnTitle> GetColumnTitles(List<string> screenerColumns)
         {
-            var columnnames = new List<string>{ColumnConstants.Ticker, ColumnConstants.CompanyName};
-            columnnames.AddRange(screenerColumns);
-            foreach (var columnname in columnnames)
+            var columnnames = new List<ColumnTitle> {
+                    new ColumnTitle{IsSticky = true,Title = ColumnConstants.TickerDisplay, columnId = ColumnConstants.Ticker},
+                    new ColumnTitle{IsSticky = true, Title = ColumnConstants.CompanyNameDisplay, columnId = ColumnConstants.CompanyName}
+            };
+            foreach (var column in screenerColumns)
             {
-                if (Columns.ContainsKey(columnname))
-                    yield return Columns[columnname].DisplayName;
+                if (Columns.ContainsKey(column))
+                    columnnames.Add(new ColumnTitle{IsSticky = false,Title = Columns[column].DisplayName,columnId = column});
             }
+            return columnnames;
         }
 
         public IEnumerable<ScreenerRowViewModel> GetRows(IEnumerable<Stock> stocks, List<string> columns)

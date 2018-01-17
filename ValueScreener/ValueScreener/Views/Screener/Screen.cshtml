@@ -4,13 +4,37 @@
 <h2>@ViewData["Title"]</h2>
 <br />
 
-
+<div class="dropdown text-right">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add Columns<span class="caret"></span></button>
+    <ul class="dropdown-menu dropdown-menu-right">
+        @foreach (var column in Model.AvailableAdditionalColumns)
+        {
+            <li><a asp-route-page="@Model.PageIndex"
+                   asp-route-criteria="@ViewData["Criteria"]"
+                   asp-route-columns="@ViewData["Columns"]"
+                   asp-route-columnToAdd="@column.Key">
+                 @Html.DisplayFor(model => column.Value)
+            </a></li>
+        }
+    </ul>
+</div>
+<br />
 <div class="row">
     <table class="table table-striped">
         <tr>
            @foreach (var columnTitle in Model.ColumnTitles)
            {
-             <th>@columnTitle</th>   
+             <th>@columnTitle.Title
+            @if (!columnTitle.IsSticky)
+            {
+                <a asp-route-page="@Model.PageIndex"
+                   asp-route-criteria="@ViewData["Criteria"]"
+                   asp-route-columns="@ViewData["Columns"]"
+                   asp-route-columnToRemove="@columnTitle.columnId">
+                    <i class="fa fa-times"></i>
+                </a>
+            }
+            </th>   
            }
         </tr>
         @foreach (var row in Model.Rows)
@@ -38,6 +62,7 @@
             Page : @Model.PageIndex of @Model.TotalPages | GoTo :
             <input type="number" name="page" value="@Model.PageIndex" />
             <input type="hidden" name="criteria" value="@ViewData["Criteria"]" />
+            <input type="hidden"  name="columns" value="@ViewData["Columns"]"/>
             <input type="submit" value="Go" class="btn btn-default" />
         </p>
     </div>
@@ -45,6 +70,7 @@
 <a asp-action="Screen"
    asp-route-page="@(Model.PageIndex - 1)"
    asp-route-criteria="@ViewData["Criteria"]"
+   asp-route-columns="@ViewData["Columns"]"
    class="btn btn-default @prevDisabled">
     Previous
 </a>
@@ -53,6 +79,7 @@
 <a asp-action="Screen"
    asp-route-page="@(Model.PageIndex + 1)"
    asp-route-criteria="@ViewData["Criteria"]"
+   asp-route-columns="@ViewData["Columns"]"
    class="btn btn-default @nextDisabled">
     Next
 </a>

@@ -10,7 +10,7 @@ namespace ValueScreener.Models.ViewModels
         public bool HasPreviousPage { get; }
         public bool HasNextPage { get; }
 
-        public List<string> ColumnTitles { get; }
+        public List<ColumnTitle> ColumnTitles { get; }
         public List<ScreenerRowViewModel> Rows { get; }
 
         public ScreenerViewModel(int pageIndex, int totalPages, bool hasPreviousPage, bool hasNextPage)
@@ -19,10 +19,21 @@ namespace ValueScreener.Models.ViewModels
             TotalPages = totalPages;
             HasPreviousPage = hasPreviousPage;
             HasNextPage = hasNextPage;
-            ColumnTitles = new List<string>();
+            ColumnTitles = new List<ColumnTitle>();
             Rows = new List<ScreenerRowViewModel>();
+            AvailableAdditionalColumns = new Dictionary<string, string>();
         }
+
+        public Dictionary<string, string> AvailableAdditionalColumns { get; }
 
      
     }
+
+    public class ColumnTitle
+    {
+        public string Title { get; set; }
+        public string columnId { get; set; }
+        public bool IsSticky { get; set; }
+    }
+
 }

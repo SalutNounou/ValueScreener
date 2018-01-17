@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace ValueScreener.Controllers.ScreenerColumns
 {
     public class ColumnConstants
@@ -49,6 +52,28 @@ namespace ValueScreener.Controllers.ScreenerColumns
 
         public const string Ncav = "ncav";
         public const string NcavDisplay = "Net Current Asset Value";
+
+
+        public static Dictionary<string, string> Columns = new Dictionary<string, string>()
+        {
+            {Roa,RoaDisplay },
+            {Roe,RoeDisplay },
+            {Country,CountryDisplay },
+            {Sector,SectorDisplay },
+            {Industry,IndustryDisplay },
+            {Roic,RoicDisplay },
+            {AvgRoa,AvgRoaDisplay },
+            {AvgRoe,AvgRoeDisplay },
+            {RoicAvg,AvgRoicDisplay },
+            {Piotroski,PiotroskiDisplay },
+            {PiotroskiAvg,AvgPiotroskiDisplay },
+            {MarketCap,MarketCapDisplay },
+            {Ncav,NcavDisplay },
+            {NcavDiscount,NcavDiscountDisplay},
+            {EnterpriseMultiple, EnterpriseMultipleDisplay },
+            {Per, PerDisplay },
+            {PriceToSales, PriceToSalesDisplay },
+        };
 
     }
 }

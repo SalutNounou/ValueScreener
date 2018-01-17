@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ValueScreener.Controllers.ScreenerColumns;
 using ValueScreener.Controllers.Screeners;
 using ValueScreener.Data;
 using ValueScreener.Models;
@@ -23,32 +25,17 @@ namespace ValueScreener.Controllers
             _screenerFactory = screenerFactory;
             _cellsGenerator = cellsGenerator;
         }
-        public async Task<IActionResult> PriceToSales(int? page)
-        {
-            ViewData["Title"] = "Price to Sales";
-            var stocks = _context.Stocks
-                   .Include(s => s.MarketData)
-                   .Include(s => s.PricingResult)
-                   .Where(s => s.MarketData != null
-                               && s.MarketData.MarketCapitalization > 0
-                               && s.PricingResult != null
-                               && s.PricingResult.PriceToSalesRatio > 0
-                               && s.MarketData.MarketCapitalization > 10000000000
-                               && s.Sector != "Health Care")
-                 .OrderByDescending(s => s.PricingResult.PriceToSalesRatio);
-            var pageSize = 25;
-            return View(await PaginatedList<Stock>.CreateAsync(stocks.AsNoTracking(),
-                page ?? 1, pageSize));
-        }
-
-
-        public async Task<IActionResult> Screen(string criteria, int? page)
+     
+        public async Task<IActionResult> Screen(string criteria, int? page,string columns, string columnToAdd, string columnToRemove)
         {
             if (string.IsNullOrEmpty(criteria)) return NotFound();
             var screener = _screenerFactory.GetScreener(criteria);
             if (screener == null) return NotFound();
+            if (!ManageColumns(screener, columns, columnToAdd, columnToRemove, out var columnsTodisplay)) return NotFound();
+            ViewData["Columns"] = string.Join(',',columnsTodisplay);
             ViewData["Criteria"] = criteria;
             ViewData["Title"] = screener.Name;
+           
             var stocks = screener.LoadStocks(_context).Where(screener.SelectionCriteria);
             stocks = screener.Order(stocks);
             var pageSize = 25;
@@ -56,9 +43,33 @@ namespace ValueScreener.Controllers
             var pageList = await PaginatedList<Stock>.CreateAsync(stocks.AsNoTracking(), page ?? 1, pageSize);
 
             var viewModel = new ScreenerViewModel(pageList.PageIndex,pageList.TotalPages,pageList.HasPreviousPage,pageList.HasNextPage);
-            viewModel.ColumnTitles.AddRange(_cellsGenerator.GetColumnTitles(screener.Columns));
-            viewModel.Rows.AddRange(_cellsGenerator.GetRows(pageList, screener.Columns));
+
+            foreach (var column in ColumnConstants.Columns.Where(x=>!columnsTodisplay.Contains(x.Key)))
+            {
+                viewModel.AvailableAdditionalColumns.Add(column.Key,column.Value);
+            }
+
+            viewModel.ColumnTitles.AddRange(_cellsGenerator.GetColumnTitles(columnsTodisplay));
+            viewModel.Rows.AddRange(_cellsGenerator.GetRows(pageList, columnsTodisplay));
             return View(viewModel);
+        }
+
+
+        private bool ManageColumns(IScreener screener, string columns, string columnToAdd, string columnToRemove, out List<string> columnsTodisplay)
+        {
+            columnsTodisplay = new List<string>();
+            if (!string.IsNullOrEmpty(columnToAdd) && !ColumnConstants.Columns.ContainsKey(columnToAdd)) return false;
+            if (!string.IsNullOrEmpty(columnToRemove) && !ColumnConstants.Columns.ContainsKey(columnToRemove)) return false;
+            if (string.IsNullOrEmpty(columns) ) columnsTodisplay = screener.Columns;
+            else
+            {
+                    var currentColumns = columns.Split(',').ToList();
+                    if (currentColumns.Any(x => !ColumnConstants.Columns.ContainsKey(x))) return false;
+                    columnsTodisplay.AddRange(currentColumns);
+            }
+            if (!string.IsNullOrEmpty(columnToAdd) && !columnsTodisplay.Contains(columnToAdd)) columnsTodisplay.Add(columnToAdd);
+            if (!string.IsNullOrEmpty(columnToRemove) && columnsTodisplay.Contains(columnToRemove)) columnsTodisplay.Remove(columnToRemove);
+            return true;
         }
     }
 }

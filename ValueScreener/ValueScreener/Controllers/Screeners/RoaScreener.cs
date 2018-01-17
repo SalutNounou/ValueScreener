@@ -16,6 +16,8 @@ namespace ValueScreener.Controllers.Screeners
             return context.Stocks
                 .Include(s => s.MarketData)
                 .Include(s => s.PricingResult)
+                .ThenInclude(p => p.PiotroskiResults)
+                .Include(s => s.PricingResult)
                 .ThenInclude(p => p.AnnualResults)
                 .AsNoTracking();
         }
@@ -50,6 +52,8 @@ namespace ValueScreener.Controllers.Screeners
         {
             return context.Stocks
                 .Include(s => s.MarketData)
+                .Include(s => s.PricingResult)
+                .ThenInclude(p => p.PiotroskiResults)
                 .Include(s => s.PricingResult)
                 .ThenInclude(p => p.AnnualResults)
                 .AsNoTracking();

@@ -9,6 +9,7 @@
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     </environment>
     <link rel="shortcut icon" href="/favicon.ico">
     <environment exclude="Development">
@@ -16,6 +17,7 @@
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        
     </environment>
 </head>
 <body>
@@ -46,17 +48,17 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.NetNets">Net Net Screener</a></li>
-                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roa">ROA Screener</a></li>
-                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoa">ROA (Avg) Screener</a></li>
                             <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Piotroski">Piotroski F-Score Screener</a></li>
                             <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgPiotroski">Piotroski F-Score(Avg) Screener</a></li>
                             <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.EnterpriseMultiple">EV/Ebitda Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roa">ROA Screener</a></li>
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoa">ROA (Avg) Screener</a></li>
                             <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roic">ROIC Screener</a></li>
                             <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoic">ROIC (Avg) Screener</a></li>
                             <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roe">ROE Screener</a></li>
                             <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoe">ROE (Avg) Screener</a></li>
-                           <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.PriceToSales"> Price To Sales Screener </a></li>
-                           
+                            <li><a asp-area="" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.PriceToSales"> Price To Sales Screener </a></li>
+
                         </ul>
                     </li>
                 </ul>
