@@ -63,40 +63,48 @@
         <th>Year</th>
         @if (Model.PricingResult != null)
         {
+            <th>Average</th>
             foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
             {
                 <th>@Html.DisplayFor(model => annualResult.Year)</th>
             }
+          
         }
     </tr>
     <tr>
         <th>ROA</th>
         @if (Model.PricingResult != null)
         {
+            <th>@Html.DisplayFor(model => Model.PricingResult.AverageRoa)  %</th>
             foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
             {
                 <td>@Html.DisplayFor(model => annualResult.ReturnOnAssets)  %</td>
             }
+          
         }
     </tr>
     <tr>
         <th>ROE</th>
         @if (Model.PricingResult != null)
         {
+            <th>@Html.DisplayFor(model => Model.PricingResult.AverageRoe)  %</th>
             foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
             {
                 <td>@Html.DisplayFor(model => annualResult.ReturnOnEquity)  %</td>
             }
+           
         }
     </tr>
     <tr>
         <th>ROIC</th>
         @if (Model.PricingResult != null)
         {
+            <th>@Html.DisplayFor(model => Model.PricingResult.AverageRoic)  %</th>
             foreach (var annualResult in Model.PricingResult.AnnualResults.OrderByDescending(r => r.Year))
             {
                 <td>@Html.DisplayFor(model => annualResult.ReturnOnInvestedCapital)  %</td>
             }
+           
         }
     </tr>
 
@@ -112,6 +120,7 @@
             {
                 <th>@piotroskiResult.Year</th>
             }
+            <th>Average</th>
         </tr>
         <tr>
             <th>Global Piotroski F-Score</th>
@@ -119,6 +128,7 @@
             {
                 <th>@piotroskiResult.GlobalFScore</th>
             }
+            <th>@Html.DisplayFor(model=>Model.PricingResult.AveragePiotroskiScore)</th>
         </tr>
         <tr>
             <th>Positive Income</th>
@@ -178,9 +188,30 @@
         </tr>
         <tr>
             <th>Outstanding Shares</th>
-            <td colspan="@Model.PricingResult.PiotroskiResults.Count" class="text-center">Not Available</td>
+            <td colspan="@Model.PricingResult.PiotroskiResults.Count" class="text-center">Not Available. 
+                <a type="button" data-toggle="modal" data-target="#modalPiotroski"> Why?</a>
+            </td>
         </tr>
     </table>
+    <div class="modal fade" id="modalPiotroski" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Piotroski F-Score</h4>
+                </div>
+                <div class="modal-body">
+                    <p>The last point of the Piotroski F-score measures if a company has been diluting its investors by emitting more shares during the year observed.</p>
+                    <p>Unfortunately, The Value Screener does not yet have access to a reliable data bank which could provide this data.</p>
+                    <p>But if you know one which is reliable and convenient, please contact us!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 }
 <br />
 
