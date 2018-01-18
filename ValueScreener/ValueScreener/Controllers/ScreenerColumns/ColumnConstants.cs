@@ -37,9 +37,9 @@ namespace ValueScreener.Controllers.ScreenerColumns
         public const string AvgPiotroskiDisplay = "Piotroski Score(Avg)";
 
         public const string Per = "per";
-        public const string PerDisplay = "PE ratio";
+        public const string PerDisplay = "P/E ratio";
         public const string PerAveg = "peravg";
-        public const string AvgPerDisplay = "PE (Avg)";
+        public const string AvgPerDisplay = "P/E (Avg)";
 
         public const string EnterpriseMultiple = "enterprisemultiple";
         public const string EnterpriseMultipleDisplay = "Ev/Ebitda";
@@ -73,7 +73,13 @@ namespace ValueScreener.Controllers.ScreenerColumns
             {EnterpriseMultiple, EnterpriseMultipleDisplay },
             {Per, PerDisplay },
             {PriceToSales, PriceToSalesDisplay },
+            {Currency, CurrencyDisplay },
+            {Market, MarketDisplay },
         };
 
+        public const string CurrencyDisplay = "Currency";
+        public const string Currency = "currency";
+        public const string MarketDisplay = "Market";
+        public const string Market = "market";
     }
 }

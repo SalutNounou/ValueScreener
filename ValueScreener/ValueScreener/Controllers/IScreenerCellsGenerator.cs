@@ -37,6 +37,8 @@ namespace ValueScreener.Controllers
 
             {ColumnConstants.EnterpriseMultiple, new EnterpriseMultipleScreenerColumn() },
             {ColumnConstants.Per, new PerScreenerColumn() },
+            {ColumnConstants.Currency, new CurrencyScreenerColumn() },
+            {ColumnConstants.Market, new MarketScreenerColumn()},
         };
 
         public IEnumerable<ColumnTitle> GetColumnTitles(List<string> screenerColumns)

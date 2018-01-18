@@ -10,6 +10,39 @@ namespace ValueScreener.Controllers.ScreenerColumns
         ScreenerCellViewModel GetCell(Stock stock);
     }
 
+    class CurrencyScreenerColumn : IScreenerColumn
+    {
+        public string DisplayName => ColumnConstants.CurrencyDisplay;
+        public ScreenerCellViewModel GetCell(Stock stock)
+        {
+            return new ScreenerCellViewModel
+            {
+                CellKind = CellKind.Text,
+                IsBold = false,
+                IsLink = false,
+                StringValue = stock.Currency,
+                StockId = stock.Id
+            };
+        }
+    }
+
+
+    class MarketScreenerColumn : IScreenerColumn
+    {
+        public string DisplayName => ColumnConstants.CurrencyDisplay;
+        public ScreenerCellViewModel GetCell(Stock stock)
+        {
+            return new ScreenerCellViewModel
+            {
+                CellKind = CellKind.Text,
+                IsBold = false,
+                IsLink = false,
+                StringValue = stock.QuotationPlace,
+                StockId = stock.Id
+            };
+        }
+    }
+
     public class NcavScreenerColumn : IScreenerColumn
     {
         public string DisplayName => ColumnConstants.NcavDisplay;

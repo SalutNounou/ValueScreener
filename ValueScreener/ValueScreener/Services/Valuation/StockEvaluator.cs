@@ -71,7 +71,7 @@ namespace ValueScreener.Services.Valuation
 
             var ebitda = financialStatement.IncomeStatement.Ebit +
                          financialStatement.CashFlowStatement.CfDepreciationAmortization;
-            if (ebitda > 0)
+            if (ebitda != 0)
             {
                 pricingResults.EnterpriseMultiple = enterpriseValue / ebitda;
             }
