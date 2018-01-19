@@ -1,5 +1,282 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@using ValueScreener.Controllers.Screeners
+<br />
+<h1>All Screeners</h1>
+<br />
+
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h2 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Net-Net Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+                <p>
+                    Popularized by Benjamin Graham, the father of Value Investing, Net-Net stocks are stocks quoting aignificantly below their Net Current Asset Value, or NCAV.
+                    The NCAV of a company is determined by looking at the balance sheet, taking the total current assets, and substracting the total liabilities.
+                </p>
+                <p>
+                    Concretely, it means that if the company ceases its activity and pays all its debts, the cash remaining is still greater than the price quoted by the market. And you receive for free all the long term assets : Properties, Factories, Machinery...
+
+                </p>
+                <p>
+                    Graham recommanded to buy stocks quoting at a discount of at least 30% of their Net Current Asset Value.
+                </p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.NetNets">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwo">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Piotroski F-Score Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+            <div class="panel-body">
+                <p>
+                    The Piotroski F-Score is a number going from 0 (the worst) to 9 (the best). It is used to measure the financial strengh of a company, using nine criterias. It is named after Joseph Piotroski, who invented it.
+                </p>
+                <br />
+                <h4>How is it calculated?</h4>
+                <p>The nine criterias are divided in three categories :</p>
+                <div class="well">
+                    <h4>Profitability :</h4>
+                    <ul>
+                        <li>Net Income : one point is earned if the Net Income is positive in the current year</li>
+                        <li>Cash From Operations : one point is earned if the Cash from Operations is positive in the current year</li>
+                        <li>Quality of Earnings : one point is earned if the Cash from Operations is greater than the Net Income in the current year</li>
+                        <li>Change in Return On Assets : one point is earned if the Returns On Assets (ROA) are greater this year than last year</li>
+                    </ul>
+                </div>
+                <div class="well">
+                    <h4>Capital Structure :</h4>
+                    <ul>
+                        <li>Change in Long Term Leverage : one point is earned if the ratio Long Term Debt to Equity is lower this year than last year</li>
+                        <li>Change in Current Ratio : one point is earned if the ratio Current Assets to Current Liabilities is greater this year than last year</li>
+                        <li>Dilution : one point is earned if no new shares were issued during this year</li>
+                    </ul>
+                </div>
+                <div class="well">
+                    <h4>Operating Efficiency :</h4>
+                    <ul>
+                        <li>Gross Margin : one point is earned if the Gross Margin is higher this year than last year</li>
+                        <li>Change in Asset Turnover : one point is earned if the Asset Turnover is greater this year than last year</li>
+                    </ul>
+                </div>
+
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Piotroski">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingThree">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Piotroski F-Score (Average) Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+            <div class="panel-body">
+                <p>
+                    The same screener as the Piotroski F-Score Screener, but averaged over several years.
+                </p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgPiotroski">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingFour">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    EV/Ebitda Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+            <div class="panel-body">
+                <p>
+                    Also known as the Enterprise Multiple, the EV/Ebitda is a ratio comparing the Enterprise Value(EV) of a company to its earning capicity, as measured by the Ebitda (earnings before interest, tax, depreciation and amortization).
+                </p>
+                <p>The EV is the value that a private investor would have to pay to acquire the company : not only the equity has to be bought, but the liabilities as well. The cash can be substracted from the total.</p>
+                <p>A low EV/Ebitda value means that the company is cheap, because the private investor would have to pay a relatively low price to get the earnings of the company.</p>
+                <p>This screener ranks stocks by their EV/Ebitda value, from lowest to highest.</p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.EnterpriseMultiple">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingFive">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    Returns On Assets (ROA) Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
+            <div class="panel-body">
+                <p>Returns On Assets, aka ROA, is simply the ratio of the Net Income of a company divided by its Total Assets.</p>
+                <p>It is a simple tool that measures how well a company is using its assets to generate an income.</p>
+                <p>Companies with a consistent ROA superior to 10% year after year are often a sign of a very good business.</p>
+                <p>This screener ranks companies according to their ROA, from highest to lowest.</p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roa">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingSix">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                    Returns On Assets (Avg) Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseSix" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSix">
+            <div class="panel-body">
+                <p>The same screener as the ROA Screener, but averaged over several years.</p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoa">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingseven">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                    Returns On Equity (ROE) Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseSeven" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingseven">
+            <div class="panel-body">
+                <p>Returns On Equity, aka ROE, is a measure of the capacity of the company to generate profits with the shareholders' money.</p>
+                <p>It is simply the Net Income divided by the Total Equity of the company.</p>
+                <p>If a company is leveraged, (lot of debts compared to equity), the comapny can have a high ROE, but a poor ROA. Therefore it is often interesting to compare both.</p>
+                <p>This screener ranks companies according to their ROE, from highest to lowest.</p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roe">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingeight">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseeight" aria-expanded="false" aria-controls="collapseeight">
+                    Returns On Equity (Avg) Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseeight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingeight">
+            <div class="panel-body">
+                <p>The same screener as the ROE Screener, but averaged over several years.</p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoe">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingNine">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
+                    Returns On Invested Capital (ROIC) Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseNine" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingNine">
+            <div class="panel-body">
+                <p>Returns On Invested Capital, aka ROIC, tells us how good a company is using its own money.</p>
+                <p>It is defined as the ratio of the Net Operating Profits After Taxes (NOPAT) divided by the Invested Capital (Total Assets - Non Interest Bearing Current Liabilities - Excess Cash).</p>
+                <p>Of course, a higher ROIC is preferable to a lower one.</p>
+                <p>This screener ranks companies according to their ROIC, from highest to lowest.</p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.Roic">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTen">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
+                    Returns On Invested Capital (Avg) Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseTen" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTen">
+            <div class="panel-body">
+                <p>The same screener as the ROIC Screener, but averaged over several years.</p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.AvgRoic">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingEleven">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseEleven" aria-expanded="false" aria-controls="collapseEleven">
+                    Price To Sales Ratio Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseEleven" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEleven">
+            <div class="panel-body">
+                <p>This screener is not like the others : instead of telling you which company is a good company, it tells you which company is currently very expensive to own.</p>
+                <p>Price to Sales ratio is simply the Market Capitalization of the company divided by its Total Revenue.</p>
+                <br />
+                <p>Why is a high P/S ratio bad, you may ask?</p>
+                <blockquote>
+                    <p><small>"At 10 times revenues, to give you a 10-year payback, I have to pay you 100% of revenues for 10 straight years in dividends. That assumes I can get that by my shareholders. That assumes I have zero cost of goods sold, which is very hard for a computer company. That assumes zero expenses, which is really hard with 39,000 employees. That assumes I pay no taxes, which is very hard. And that assumes you pay no taxes on your dividends, which is kind of illegal. And that assumes with zero R&D for the next 10 years, I can maintain the current revenue run rate. Now, having done that, would any of you like to buy my stock at $64? Do you realize how ridiculous those basic assumptions are? You don’t need any transparency. You don’t need any footnotes. What were you thinking?"</small></p>
+                    <footer>Scott McNeely, CEO of Sun Microsystems, some time after the Dotcom bubble</footer>
+                </blockquote>
+                <p>This screener ranks companies according to their P/S ratio, from highest to lowest.</p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.PriceToSales">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>
+

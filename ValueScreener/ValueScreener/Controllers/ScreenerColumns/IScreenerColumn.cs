@@ -10,6 +10,63 @@ namespace ValueScreener.Controllers.ScreenerColumns
         ScreenerCellViewModel GetCell(Stock stock);
     }
 
+    class InterestCoveredScreenerColumn : IScreenerColumn
+    {
+        public string DisplayName => ColumnConstants.InterestCoveredDisplay;
+        public ScreenerCellViewModel GetCell(Stock stock)
+        {
+            var ratio = 0M;
+            if (stock.PricingResult != null)
+                ratio = stock.PricingResult.TimesInterestCovered;
+            return new ScreenerCellViewModel
+            {
+                CellKind = CellKind.Number,
+                IsBold = false,
+                IsLink = false,
+                NumberValue = ratio,
+                StockId = stock.Id
+            };
+        }
+    }
+
+    class SolvencyScreenerColumn : IScreenerColumn
+    {
+        public string DisplayName => ColumnConstants.SolvencyRatioDisplay;
+        public ScreenerCellViewModel GetCell(Stock stock)
+        {
+            var ratio = 0M;
+            if (stock.PricingResult != null)
+                ratio = stock.PricingResult.LeverageRatio;
+            return new ScreenerCellViewModel
+            {
+                CellKind = CellKind.Percentage,
+                IsBold = false,
+                IsLink = false,
+                PercentageValue = ratio,
+                StockId = stock.Id
+            };
+        }
+    }
+
+    class PriceScreenerColumn : IScreenerColumn
+    {
+        public string DisplayName => ColumnConstants.PriceDisplay;
+        public ScreenerCellViewModel GetCell(Stock stock)
+        {
+            var price = 0M;
+            if (stock.MarketData != null)
+                price = stock.MarketData.LastPrice ?? 0;
+            return new ScreenerCellViewModel
+            {
+                CellKind = CellKind.Number,
+                IsBold = false,
+                IsLink = false,
+                NumberValue = price,
+                StockId = stock.Id
+            };
+        }
+    }
+
     class CurrencyScreenerColumn : IScreenerColumn
     {
         public string DisplayName => ColumnConstants.CurrencyDisplay;

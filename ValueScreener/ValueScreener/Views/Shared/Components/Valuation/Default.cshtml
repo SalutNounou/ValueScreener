@@ -12,21 +12,6 @@
 }
 
 <table class="table table-striped">
-    <tr><th>Net Net Indicators :</th></tr>
-    <tr>
-        <th> Net Current Asset Value</th>
-        <td>
-            @if (Model.PricingResult != null)
-            {
-                @Html.DisplayFor(model => model.PricingResult.NetCurrentAssetValue)
-                @: @Model.Currency
-            }
-        </td>
-    </tr>
-    <tr>
-        <th> Discount on NCAV</th>
-        <td> @Html.DisplayFor(model => model.PricingResult.DiscountOnNcav) %</td>
-    </tr>
     <tr><th>Financial Ratios :</th></tr>
     <tr>
         <th> Price/Earnings Ratio</th>
@@ -109,6 +94,33 @@
     </tr>
 
 </table>
+<br />
+<table class="table table-striped">
+<tr><th>Financial Health :</th></tr>
+<tr>
+    <th> Net Current Asset Value</th>
+    <td>
+        @if (Model.PricingResult != null)
+        {
+            @Html.DisplayFor(model => model.PricingResult.NetCurrentAssetValue)
+            @: @Model.Currency
+        }
+    </td>
+</tr>
+    <tr>
+        <th> Discount on NCAV</th>
+        <td> @Html.DisplayFor(model => model.PricingResult.DiscountOnNcav) %</td>
+    </tr>
+    <tr>
+        <th> Solvency Ratio</th>
+        <td> @Html.DisplayFor(model => model.PricingResult.LeverageRatio) %</td>
+    </tr>
+    <tr>
+        <th> Times Interest Earned</th>
+        <td> @Html.DisplayFor(model => model.PricingResult.TimesInterestCovered) </td>
+    </tr>
+</table>
+
 <br />
 @if (@Model.PricingResult != null && @Model.PricingResult.PiotroskiResults.Any())
 {

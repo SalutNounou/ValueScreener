@@ -47,6 +47,6 @@ namespace ValueScreener.Controllers.Screeners
 
         public string Name => "Net-Net Screener";
 
-        public List<string> Columns => new List<string> { ColumnConstants.NcavDiscount, ColumnConstants.MarketCap, ColumnConstants.Ncav, ColumnConstants.Industry, ColumnConstants.Country };
+        public List<string> Columns => new List<string> { ColumnConstants.NcavDiscount, ColumnConstants.MarketCap, ColumnConstants.Ncav,ColumnConstants.SolvencyRatio, ColumnConstants.Country };
     }
 }

@@ -21,6 +21,7 @@ namespace ValueScreener.Services.Valuation
             _statementOrganizer.Initialize(stock.FinancialStatements);
             var pricingResults = new PricingResult();
             EvaluateNcaV(pricingResults, stock.MarketData);
+            EvaluateFinancialHealth(pricingResults);
             EvaluatePer(pricingResults, stock.MarketData);
             EvaluateEnterpriseMultiple(pricingResults, stock.MarketData);
             pricingResults.AnnualResults = GetAnnualResults();
@@ -28,6 +29,21 @@ namespace ValueScreener.Services.Valuation
             pricingResults.PiotroskiResults = GetPiotroskiResults();
             PerformPiotroskiStatistics(pricingResults);
             stock.PricingResult = pricingResults;
+        }
+
+        private void EvaluateFinancialHealth(PricingResult pricingResults)
+        {
+            var statement = _statementOrganizer.GetLastFinancialStatement();
+            if (statement == null) return;
+            var equity = statement.BalanceSheet.RealTotalEquity;
+            var assets = statement.BalanceSheet.TotalAssets;
+            var cash = statement.BalanceSheet.CashCashEquivalentAndShortTermInvestments;
+            if (assets - cash != 0)
+                pricingResults.LeverageRatio = equity * 100 / (assets - cash);
+            var interestExpense = statement.IncomeStatement.InterestExpense;
+            var income = statement.IncomeStatement.Ebit;
+            if (interestExpense != 0)
+                pricingResults.TimesInterestCovered = income / interestExpense;
         }
 
         private void PerformReturnsStatistics(PricingResult pricingResults)

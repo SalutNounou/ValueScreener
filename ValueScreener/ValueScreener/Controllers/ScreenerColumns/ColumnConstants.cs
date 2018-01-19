@@ -75,11 +75,21 @@ namespace ValueScreener.Controllers.ScreenerColumns
             {PriceToSales, PriceToSalesDisplay },
             {Currency, CurrencyDisplay },
             {Market, MarketDisplay },
+            {Price, PriceDisplay },
+            {SolvencyRatio, SolvencyRatioDisplay },
+            {InterestCovered, InterestCoveredDisplay },
         };
 
         public const string CurrencyDisplay = "Currency";
         public const string Currency = "currency";
         public const string MarketDisplay = "Market";
         public const string Market = "market";
+        public const string Price = "price";
+        public const string PriceDisplay = "Price";
+        public const string SolvencyRatio = "solvency";
+        public const string SolvencyRatioDisplay = "Solvency Ratio";
+
+        public const string InterestCoveredDisplay = "Times Interest Covered";
+        public const string InterestCovered = "interestcovered";
     }
 }

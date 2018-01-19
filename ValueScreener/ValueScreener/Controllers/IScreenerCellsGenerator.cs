@@ -39,6 +39,9 @@ namespace ValueScreener.Controllers
             {ColumnConstants.Per, new PerScreenerColumn() },
             {ColumnConstants.Currency, new CurrencyScreenerColumn() },
             {ColumnConstants.Market, new MarketScreenerColumn()},
+            {ColumnConstants.Price, new PriceScreenerColumn()},
+            {ColumnConstants.SolvencyRatio, new SolvencyScreenerColumn()},
+            {ColumnConstants.InterestCovered, new InterestCoveredScreenerColumn()},
         };
 
         public IEnumerable<ColumnTitle> GetColumnTitles(List<string> screenerColumns)

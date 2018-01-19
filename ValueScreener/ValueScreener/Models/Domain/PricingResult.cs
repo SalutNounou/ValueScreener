@@ -16,9 +16,11 @@ namespace ValueScreener.Models.Domain
         public decimal NetCurrentAssetValue { get; set; }
         [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
         public decimal DiscountOnNcav { get; set; }
-        
-
-            #endregion
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal LeverageRatio { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal TimesInterestCovered { get; set; }
+        #endregion
 
         #region Multiples
 
