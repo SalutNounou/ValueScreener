@@ -278,5 +278,27 @@
             </div>
         </div>
     </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwelve">
+            <h2 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwelve" aria-expanded="false" aria-controls="collapseTwelve">
+                    Price/Free Cash Flows Screener
+                </a>
+            </h2>
+        </div>
+        <div id="collapseTwelve" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwelve">
+            <div class="panel-body">
+                <p>The Free Cash Flows (FCF) represent the Cash available for distribution at the end of the year.</p>
+                <p>The Price/Free Cash Flows ratio is then a measure of the capacity of the company to generate cash, compared to the price paid for this company.</p>
+                <p>The lowest the P/FCF ratio is, the more the investor will get Free Cash Flows for his money.</p>
+                <p>This screener ranks companies according to their P/FCF ratio, from lowest to highest.</p>
+                <h2>
+                    <a style="text-decoration: none" asp-controller="Screener" asp-action="Screen" asp-route-criteria="@ScreenerConstants.PriceFcf">
+                        Go to Screener <i class="fa fa-arrow-right"></i>
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
 </div>
 

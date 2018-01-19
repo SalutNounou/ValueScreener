@@ -16,7 +16,8 @@ namespace ValueScreener.Controllers.Screeners
             {ScreenerConstants.AvgRoe, new AvgRoeScreener()},
             {ScreenerConstants.Roe, new RoeScreener()},
             {ScreenerConstants.AvgRoa, new AvgRoaScreener()},
-            {ScreenerConstants.Roa, new RoaScreener() }
+            {ScreenerConstants.Roa, new RoaScreener() },
+            {ScreenerConstants.PriceFcf, new PFcfScreener() }
         };
         public IScreener GetScreener(string criteria)
         {
@@ -38,5 +39,6 @@ namespace ValueScreener.Controllers.Screeners
         public const string Roe = "roe";
         public const string AvgRoa = "roaavg";
         public const string AvgPiotroski = "piotroskiavg";
+        public const string PriceFcf = "pfcf";
     }
 }
