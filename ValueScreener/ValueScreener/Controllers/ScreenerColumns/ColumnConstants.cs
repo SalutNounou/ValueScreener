@@ -57,13 +57,10 @@ namespace ValueScreener.Controllers.ScreenerColumns
         public static Dictionary<string, string> Columns = new Dictionary<string, string>()
         {
             {Roa,RoaDisplay },
-            {Roe,RoeDisplay },
-            {Country,CountryDisplay },
-            {Sector,SectorDisplay },
-            {Industry,IndustryDisplay },
-            {Roic,RoicDisplay },
             {AvgRoa,AvgRoaDisplay },
+            {Roe,RoeDisplay },
             {AvgRoe,AvgRoeDisplay },
+            {Roic,RoicDisplay },
             {RoicAvg,AvgRoicDisplay },
             {Piotroski,PiotroskiDisplay },
             {PiotroskiAvg,AvgPiotroskiDisplay },
@@ -72,12 +69,35 @@ namespace ValueScreener.Controllers.ScreenerColumns
             {NcavDiscount,NcavDiscountDisplay},
             {EnterpriseMultiple, EnterpriseMultipleDisplay },
             {Per, PerDisplay },
+            {PriceToFreeCashFlow, PriceToFreeCashFlowDisplay },
+            {AvgPriceToFreeCashFlow, AvgPriceToFreeCashFlowDisplay },
             {PriceToSales, PriceToSalesDisplay },
             {Currency, CurrencyDisplay },
             {Market, MarketDisplay },
             {Price, PriceDisplay },
             {SolvencyRatio, SolvencyRatioDisplay },
             {InterestCovered, InterestCoveredDisplay },
+            {Leverage, LeverageDisplay },
+            {AvgLeverage, AvgLeverageDisplay },
+
+            {SalesGrowth, SalesGrowthDisplay },
+            {AvgSalesGrowth, AvgSalesGrowthDisplay },
+            {GrossMargin, GrossMarginDisplay },
+            {AvgGrossMargin, AvgGrossMarginDisplay },
+            {NetMargin, NetMarginDisplay },
+            {AvgNetMargin, AvgNetMarginDisplay },
+            {AssetTurnover, AssetTurnoverDisplay },
+            {AvgAssetTurnover, AvgAssetTurnoverDisplay },
+           
+            {CurrentRatio, CurrencyDisplay },
+            {AvgCurrentRatio, AvgCurrentRatioDisplay },
+            {QuickRatio, QuickRatioDisplay },
+            {AvgQuickRatio, AvgQuickRatioDisplay },
+
+            {Country,CountryDisplay },
+            {Sector,SectorDisplay },
+            {Industry,IndustryDisplay },
+
         };
 
         public const string CurrencyDisplay = "Currency";
@@ -91,5 +111,48 @@ namespace ValueScreener.Controllers.ScreenerColumns
 
         public const string InterestCoveredDisplay = "Times Interest Covered";
         public const string InterestCovered = "interestcovered";
+
+        public const string SalesGrowth = "salesGrowth";
+        public const string SalesGrowthDisplay = "Sales Growth";
+        public const string AvgSalesGrowth = "avgsalesgrowth";
+        public const string AvgSalesGrowthDisplay = "Sales Growth (Avg)";
+
+        public const string GrossMargin = "grossmargin";
+        public const string GrossMarginDisplay = "Gross Margin";
+        public const string AvgGrossMargin = "avggrossmargin";
+        public const string AvgGrossMarginDisplay = "Gross Margin (Avg)";
+
+        public const string NetMargin = "netmargin";
+        public const string NetMarginDisplay = "Net Margin";
+        public const string AvgNetMargin = "avgnetmargin";
+        public const string AvgNetMarginDisplay = "Net Margin (Avg)";
+
+        public const string AssetTurnover = "assetturnover";
+        public const string AssetTurnoverDisplay = "Asset Turnover";
+        public const string AvgAssetTurnover = "avgassetturnover";
+        public const string AvgAssetTurnoverDisplay = "Asset Turnover (Avg)";
+
+        public const string PriceToFreeCashFlow = "pfcf";
+        public const string PriceToFreeCashFlowDisplay = "P/FCF";
+        public const string AvgPriceToFreeCashFlow = "avgpfcf";
+        public const string AvgPriceToFreeCashFlowDisplay = "P/FCF (Avg)";
+
+        public const string Leverage = "leverage";
+        public const string LeverageDisplay = "Leverage";
+        public const string AvgLeverage = "avgleverage";
+        public const string AvgLeverageDisplay = "Leverage (Avg)";
+
+        public const string CurrentRatio = "currentratio";
+        public const string CurrentRatioDisplay = "Current Ratio";
+        public const string AvgCurrentRatio = "avgcurrentratio";
+        public const string AvgCurrentRatioDisplay = "Current Ratio (Avg)";
+
+        public const string QuickRatio = "quickratio";
+        public const string QuickRatioDisplay = "Quick Ratio";
+        public const string AvgQuickRatio = "avgquickratio";
+        public const string AvgQuickRatioDisplay = "Quick Ratio (Avg)";
+
+
+
     }
 }

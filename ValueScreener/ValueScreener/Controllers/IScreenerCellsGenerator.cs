@@ -42,6 +42,26 @@ namespace ValueScreener.Controllers
             {ColumnConstants.Price, new PriceScreenerColumn()},
             {ColumnConstants.SolvencyRatio, new SolvencyScreenerColumn()},
             {ColumnConstants.InterestCovered, new InterestCoveredScreenerColumn()},
+
+            {ColumnConstants.PriceToFreeCashFlow, new PFcfScreenerColumn()},
+            {ColumnConstants.AvgPriceToFreeCashFlow, new AvgPFcfScreenerColumn()},
+            {ColumnConstants.SalesGrowth, new SalesGrowthScreenerColumn()},
+            {ColumnConstants.AvgSalesGrowth, new AvgSalesGrowthScreenerColumn()},
+
+            {ColumnConstants.GrossMargin, new GrossMarginScreenerColumn()},
+            {ColumnConstants.AvgGrossMargin, new AvgGrossMarginScreenerColumn()},
+            {ColumnConstants.NetMargin, new NetMarginScreenerColumn()},
+            {ColumnConstants.AvgNetMargin, new AvgNetMarginScreenerColumn()},
+
+            {ColumnConstants.AssetTurnover, new AssetTurnOverScreenerColumn()},
+            {ColumnConstants.AvgAssetTurnover, new AvgAssetTurnoverScreenerColumn()},
+            {ColumnConstants.Leverage, new LeverageColumn()},
+            {ColumnConstants.AvgLeverage, new AvgLeverageScreenerColumn()},
+
+            {ColumnConstants.CurrentRatio, new CurrentRatioScreenerColumn()},
+            {ColumnConstants.AvgCurrentRatio, new AvgCurrentRatioScreenerColumn()},
+            {ColumnConstants.QuickRatio, new QuickRatioScreenerColumn()},
+            {ColumnConstants.AvgQuickRatio, new AvgQuickRatioScreenerColumn()},
         };
 
         public IEnumerable<ColumnTitle> GetColumnTitles(List<string> screenerColumns)

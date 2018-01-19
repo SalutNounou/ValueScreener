@@ -19,6 +19,8 @@ namespace ValueScreener.Models.Domain
         public bool NoDilutionInShares { get; set; }
         public bool HigherGrossMargin { get; set; }
         public bool HigherAssetTurnover { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal SalesGrowth { get; set; }
     }
 
 

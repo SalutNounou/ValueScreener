@@ -28,7 +28,19 @@ namespace ValueScreener.Services.Valuation
             PerformReturnsStatistics(pricingResults);
             pricingResults.PiotroskiResults = GetPiotroskiResults();
             PerformPiotroskiStatistics(pricingResults);
+            EvaluatePriceToFcf(pricingResults, stock.MarketData);
             stock.PricingResult = pricingResults;
+        }
+
+        private void EvaluatePriceToFcf(PricingResult pricingResults, Models.Domain.MarketData marketData)
+        {
+            if (!pricingResults.AnnualResults.Any()) return;
+            var lastResult = pricingResults.AnnualResults.OrderByDescending(x => x.Year).First();
+            var fcf = lastResult.FreeCashFlow;
+            if (fcf != 0) pricingResults.CurrentPriceToFcfRatio = (marketData.MarketCapitalization ?? 0 )/ fcf;
+            if (pricingResults.AverageFreeCashFlow == 0) return;
+            pricingResults.AveragePriceToFcfRatio =
+                (marketData.MarketCapitalization ?? 0) / pricingResults.AverageFreeCashFlow;
         }
 
         private void EvaluateFinancialHealth(PricingResult pricingResults)
@@ -40,7 +52,7 @@ namespace ValueScreener.Services.Valuation
             var cash = statement.BalanceSheet.CashCashEquivalentAndShortTermInvestments;
             if (assets - cash != 0)
                 pricingResults.LeverageRatio = equity * 100 / (assets - cash);
-            var interestExpense = statement.IncomeStatement.InterestExpense;
+            var interestExpense = statement.IncomeStatement.RealInterestExpense;
             var income = statement.IncomeStatement.Ebit;
             if (interestExpense != 0)
                 pricingResults.TimesInterestCovered = income / interestExpense;
@@ -53,20 +65,39 @@ namespace ValueScreener.Services.Valuation
                 pricingResults.AverageRoa = pricingResults.AnnualResults.Average(x => x.ReturnOnAssets);
                 pricingResults.AverageRoe = pricingResults.AnnualResults.Average(x => x.ReturnOnEquity);
                 pricingResults.AverageRoic = pricingResults.AnnualResults.Average(x => x.ReturnOnInvestedCapital);
+                pricingResults.AverageAssetTurnover = pricingResults.AnnualResults.Average(x => x.AssetTurnover);
+                pricingResults.AverageCurrentRatio = pricingResults.AnnualResults.Average(x => x.CurrentRatio);
+                pricingResults.AverageFreeCashFlow = pricingResults.AnnualResults.Average(x => x.FreeCashFlow);
+                pricingResults.AverageGrossMargin = pricingResults.AnnualResults.Average(x => x.GrossMargin);
+                pricingResults.AverageLeverage = pricingResults.AnnualResults.Average(x => x.Leverage);
+                pricingResults.AverageNetMargin = pricingResults.AnnualResults.Average(x => x.NetMargin);
+                pricingResults.AverageQuickRatio = pricingResults.AnnualResults.Average(x => x.QuickRatio);
                 var lastResult = pricingResults.AnnualResults.OrderByDescending(x => x.Year).First();
                 pricingResults.CurrentRoa = lastResult.ReturnOnAssets;
                 pricingResults.CurrentRoe = lastResult.ReturnOnEquity;
                 pricingResults.CurrentRoic = lastResult.ReturnOnInvestedCapital;
+                pricingResults.CurrentAssetTurnover = lastResult.AssetTurnover;
+                pricingResults.CurrentCurrentRatio = lastResult.CurrentRatio;
+                pricingResults.CurrentFreeCashFlow = lastResult.FreeCashFlow;
+                pricingResults.CurrentGrossMargin = lastResult.GrossMargin;
+                pricingResults.CurrentLeverage = lastResult.Leverage;
+                pricingResults.CurrentNetMargin = lastResult.NetMargin;
+                pricingResults.CurrentQuickRatio = lastResult.QuickRatio;
+
             }
+
         }
 
         private void PerformPiotroskiStatistics(PricingResult pricingResults)
         {
             if (pricingResults.PiotroskiResults.Any())
             {
-                pricingResults.CurrentPiotroskiScore = pricingResults.PiotroskiResults.OrderByDescending(x => x.Year)
-                    .First().GlobalFScore;
+                var lastResult = pricingResults.PiotroskiResults.OrderByDescending(x => x.Year)
+                    .First();
+                pricingResults.CurrentPiotroskiScore = lastResult.GlobalFScore;
                 pricingResults.AveragePiotroskiScore = (decimal)pricingResults.PiotroskiResults.Average(x => x.GlobalFScore);
+                pricingResults.AverageSalesGrowth = pricingResults.PiotroskiResults.Average(x => x.SalesGrowth);
+                pricingResults.CurrentSalesGrowth = lastResult.SalesGrowth;
             }
         }
 
@@ -133,13 +164,26 @@ namespace ValueScreener.Services.Valuation
                 var annualResult = new AnnualResult
                 {
                     Year = financialStatement.FiscalYear,
-                    ReturnOnAssets = GetRoa(financialStatement)??0,
+                    ReturnOnAssets = GetRoa(financialStatement) ?? 0,
                     ReturnOnEquity = CalculateRoe(financialStatement),
-                    ReturnOnInvestedCapital = CalculateRoic(financialStatement)
+                    ReturnOnInvestedCapital = CalculateRoic(financialStatement),
+                    AssetTurnover = GetAssetTurnover(financialStatement) ?? 0,
+                    CurrentRatio = GetCurrenRatio(financialStatement) ?? 0,
+                    QuickRatio = GetQuickRatio(financialStatement) ?? 0,
+                    GrossMargin = GetGrossMargin(financialStatement) ?? 0,
+                    Leverage = GetEquityLeverage(financialStatement) ?? 0,
+                    NetMargin = GetNetMargin(financialStatement) ?? 0,
+                    FreeCashFlow = GetFreeCashFlows(financialStatement)
                 };
                 annualResults.Add(annualResult);
             }
             return annualResults;
+        }
+
+        private decimal GetFreeCashFlows(FinancialStatement financialStatement)
+        {
+            return financialStatement.CashFlowStatement.CashFromOperatingActivities
+                   -Math.Abs(financialStatement.CashFlowStatement.CapitalExpanditure);
         }
 
 
@@ -198,7 +242,8 @@ namespace ValueScreener.Services.Valuation
                 HigherCurrentRatio = HasHigherCurrentRatio(statements),
                 HigherGrossMargin = HasHigherGrossMargin(statements),
                 HigherReturnOnAssets = HasHigherReturnOnAssets(statements),
-                LowerLeverage = HasLowerLeverage(statements)
+                LowerLeverage = HasLowerLeverage(statements),
+                SalesGrowth = GetSalesGrowth(statements)??0
             };
 
             result.GlobalFScore = (result.GoodAccrual ? 1 : 0)
@@ -212,6 +257,12 @@ namespace ValueScreener.Services.Valuation
             + (result.PositiveReturns ? 1 : 0);
 
             return result;
+        }
+
+        private decimal? GetSalesGrowth(List<FinancialStatement> statements)
+        {
+            if (statements[1].IncomeStatement.TotalRevenue == 0) return null;
+            return 100 * ((statements[0].IncomeStatement.TotalRevenue / statements[1].IncomeStatement.TotalRevenue) - 1);
         }
 
         private bool HasGoodAccrual(FinancialStatement statement)
@@ -232,7 +283,14 @@ namespace ValueScreener.Services.Valuation
         private decimal? GetCurrenRatio(FinancialStatement financialStatement)
         {
             if (financialStatement.BalanceSheet.TotalCurrentLiabilities == 0) return null;
-            return financialStatement.BalanceSheet.TotalCurrentAssets /
+            return 100 * financialStatement.BalanceSheet.TotalCurrentAssets /
+                   financialStatement.BalanceSheet.TotalCurrentLiabilities;
+        }
+
+        private decimal? GetQuickRatio(FinancialStatement financialStatement)
+        {
+            if (financialStatement.BalanceSheet.TotalCurrentLiabilities == 0) return null;
+            return 100 * financialStatement.BalanceSheet.CashCashEquivalentAndShortTermInvestments /
                    financialStatement.BalanceSheet.TotalCurrentLiabilities;
         }
 
@@ -248,7 +306,7 @@ namespace ValueScreener.Services.Valuation
         private decimal? GetAssetTurnover(FinancialStatement financialStatement)
         {
             if (financialStatement.BalanceSheet.TotalAssets == 0) return null;
-            return financialStatement.IncomeStatement.TotalRevenue / financialStatement.BalanceSheet.TotalAssets;
+            return 100 * financialStatement.IncomeStatement.TotalRevenue / financialStatement.BalanceSheet.TotalAssets;
         }
 
         private bool HasHigherGrossMargin(List<FinancialStatement> statements)
@@ -263,7 +321,13 @@ namespace ValueScreener.Services.Valuation
         private decimal? GetGrossMargin(FinancialStatement financialStatement)
         {
             if (financialStatement.IncomeStatement.TotalRevenue == 0) return null;
-            return financialStatement.IncomeStatement.GrossProfit / financialStatement.IncomeStatement.TotalRevenue;
+            return 100 * financialStatement.IncomeStatement.GrossProfit / financialStatement.IncomeStatement.TotalRevenue;
+        }
+
+        private decimal? GetNetMargin(FinancialStatement financialStatement)
+        {
+            if (financialStatement.IncomeStatement.TotalRevenue == 0) return null;
+            return 100 * financialStatement.IncomeStatement.NetIncome / financialStatement.IncomeStatement.TotalRevenue;
         }
 
         private bool HasHigherReturnOnAssets(List<FinancialStatement> statements)
@@ -278,7 +342,7 @@ namespace ValueScreener.Services.Valuation
         private decimal? GetRoa(FinancialStatement financialStatement)
         {
             if (financialStatement.BalanceSheet.TotalAssets == 0) return null;
-            return 100* financialStatement.IncomeStatement.NetIncomeApplicableToCommon /
+            return 100 * financialStatement.IncomeStatement.NetIncomeApplicableToCommon /
                    financialStatement.BalanceSheet.TotalAssets;
 
         }
@@ -296,6 +360,13 @@ namespace ValueScreener.Services.Valuation
         {
             if (financialStatement.BalanceSheet.TotalAssets == 0) return null;
             return financialStatement.BalanceSheet.TotalLongTermDebt / financialStatement.BalanceSheet.TotalAssets;
+        }
+
+
+        private decimal? GetEquityLeverage(FinancialStatement financialStatement)
+        {
+            if (financialStatement.BalanceSheet.RealTotalEquity == 0) return null;
+            return financialStatement.BalanceSheet.TotalLiabilities / financialStatement.BalanceSheet.RealTotalEquity;
         }
     }
 }

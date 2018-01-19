@@ -12,27 +12,7 @@ namespace ValueScreener.Models.Domain
         [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
         public decimal EquityEarnings { get; set; }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
 
         [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
         public decimal TotalRevenue { get; set; }
@@ -52,6 +32,16 @@ namespace ValueScreener.Models.Domain
 
         [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
         public decimal InterestExpense { get; set; }
+        [NotMapped]
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public decimal RealInterestExpense
+        {
+            get
+            {
+                if (InterestExpense != 0) return InterestExpense;
+                return Ebit - IncomeBeforeTaxes;
+            }
+        }
 
         [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
         public decimal IncomeBeforeTaxes { get; set; }

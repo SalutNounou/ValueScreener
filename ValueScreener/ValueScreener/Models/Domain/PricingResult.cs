@@ -52,6 +52,43 @@ namespace ValueScreener.Models.Domain
         [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
         public Decimal AveragePiotroskiScore { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal CurrentGrossMargin { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal AverageGrossMargin { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal CurrentSalesGrowth { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal AverageSalesGrowth { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal CurrentNetMargin { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal AverageNetMargin { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal CurrentLeverage { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal AverageLeverage { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal CurrentAssetTurnover { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal AverageAssetTurnover { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal CurrentFreeCashFlow { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal AverageFreeCashFlow { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal CurrentCurrentRatio { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal AverageCurrentRatio { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal CurrentQuickRatio { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal AverageQuickRatio { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal CurrentPriceToFcfRatio { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N2}", NullDisplayText = "To Be Refreshed")]
+        public Decimal AveragePriceToFcfRatio { get; set; }
+
 
 
         #endregion
