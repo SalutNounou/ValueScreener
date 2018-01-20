@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ namespace ValueScreener.Services.Batch
     {
         Task RetrieveAllMArketData();
         Task RetrieveAllFinancialStatements();
-      
+
         Task ReevaluateAllStocks();
         Task RetrieveEverything();
 
@@ -39,36 +40,80 @@ namespace ValueScreener.Services.Batch
 
         public async Task RetrieveAllMArketData()
         {
-            var stocks = _context.Stocks.Include(s => s.MarketData).OrderBy(s => s.Ticker);
 
-            await _stockMarketDataUpdater.UpdateMarketDataBatchAsync(stocks);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task RetrieveAllFinancialStatements()
-        {
-            for (int i = 1; i <= 10; i++)
+            var minId = await _context.Stocks.MinAsync(x => x.Id);
+            var maxId = await _context.Stocks.MaxAsync(x => x.Id);
+            var batchSize = 200;
+            var batchNumber = (int)Math.Ceiling((decimal)(maxId - minId + 1) / batchSize);
+            for (int i = 1; i <= batchNumber; i++)
             {
-                await RetrieveAllFinancialStatements(i, StatementFrequency.Annual);
-                await RetrieveAllFinancialStatements(i, StatementFrequency.Quarterly);
+                await RetrieveMarketData(i, batchSize, minId, maxId);
             }
         }
 
-        public async Task RetrieveAllFinancialStatements(int whichDecile, StatementFrequency frequency)
+        public async Task RetrieveMarketData(int whichBatch, int batchSize, int minId, int maxId)
         {
+            var idFrom = minId + (whichBatch - 1) * batchSize;
+            var idTo = minId + (whichBatch * batchSize) - 1;
             var stocks = _context.Stocks
                 .Include(s => s.FinancialStatements)
                 .ThenInclude(f => f.BalanceSheet)
                 .Include(s => s.FinancialStatements)
                 .ThenInclude(f => f.IncomeStatement)
                 .Include(s => s.FinancialStatements)
-                .ThenInclude(f => f.CashFlowStatement).Where(stock => StockGroups[whichDecile].Any(letter => stock.Ticker.ToUpper().StartsWith(letter)));
+                .ThenInclude(f => f.CashFlowStatement).
+                Where(x => x.Id >= idFrom && x.Id <= idTo);
+            await _stockMarketDataUpdater.UpdateMarketDataBatchAsync(stocks);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RetrieveAllFinancialStatements()
+        {
+
+            var minId = await _context.Stocks.MinAsync(x => x.Id);
+            var maxId = await _context.Stocks.MaxAsync(x => x.Id);
+            var batchSize = 60;
+            var batchNumber = (int)Math.Ceiling((decimal)(maxId - minId + 1) / batchSize);
+            for (int i = 1; i <= batchNumber; i++)
+            {
+                await RetrieveAllFinancialStatements(i, batchSize, minId, maxId, StatementFrequency.Annual);
+                await RetrieveAllFinancialStatements(i, batchSize, minId, maxId, StatementFrequency.Quarterly);
+            }
+        }
+
+        public async Task RetrieveAllFinancialStatements(int whichBatch, int batchSize, int minId, int maxId, StatementFrequency frequency)
+        {
+            var idFrom = minId + (whichBatch - 1) * batchSize;
+            var idTo = minId + (whichBatch * batchSize) - 1;
+            var stocks = _context.Stocks
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.BalanceSheet)
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.IncomeStatement)
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.CashFlowStatement).
+                Where(x => x.Id >= idFrom && x.Id <= idTo);
             await _financialStatementUpdater.UpdateFinancialStatementsBatchAsync(stocks, frequency);
             await _context.SaveChangesAsync();
         }
 
         public async Task ReevaluateAllStocks()
         {
+
+            var minId = await _context.Stocks.MinAsync(x => x.Id);
+            var maxId = await _context.Stocks.MaxAsync(x => x.Id);
+            var batchSize = 60;
+            var batchNumber = (int)Math.Ceiling((decimal)(maxId - minId + 1) / batchSize);
+            for (int i = 1; i <= batchNumber; i++)
+            {
+                await EvaluateStocks(i, batchSize, minId, maxId);
+            }
+        }
+
+        public async Task EvaluateStocks(int whichBatch, int batchSize, int minId, int maxId)
+        {
+            var idFrom = minId + (whichBatch - 1) * batchSize;
+            var idTo = minId + (whichBatch * batchSize) - 1;
             var stocks = _context.Stocks
                 .Include(s => s.MarketData)
                 .Include(s => s.FinancialStatements)
@@ -80,9 +125,11 @@ namespace ValueScreener.Services.Batch
                 .Include(s => s.PricingResult)
                 .ThenInclude(p => p.AnnualResults)
                 .Include(s => s.PricingResult)
-                .ThenInclude(p => p.PiotroskiResults);
+                .ThenInclude(p => p.PiotroskiResults)
+                .Where(x => x.Id >= idFrom && x.Id <= idTo);
             await stocks.ForEachAsync(stock => _stockEvaluator.EvaluateStock(stock));
             await _context.SaveChangesAsync();
+            Console.WriteLine($"Evaluated Successfuly stocks from id {minId} to {maxId}.");
         }
 
         public async Task RetrieveEverything()

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ValueScreener.Authorization;
 using ValueScreener.Data;
 using ValueScreener.Models.Domain;
+using ValueScreener.Models.ViewModels;
 using ValueScreener.Services.FinancialStatements;
 using ValueScreener.Services.MarketData;
 using ValueScreener.Services.Valuation;
@@ -39,7 +40,16 @@ namespace ValueScreener.Controllers
             {
                 return new ChallengeResult();
             }
-            return View();
+
+            var viewModel = new RefreshDataViewModel
+            {
+                StockNumber = await _context.Stocks.CountAsync(),
+                MinId = await _context.Stocks.MinAsync(x => x.Id),
+                MaxId = await _context.Stocks.MaxAsync(x => x.Id)
+            };
+           
+
+            return View(viewModel);
         }
 
 

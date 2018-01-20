@@ -1,10 +1,21 @@
 ﻿@using ValueScreener.Authorization
 @using ValueScreener.Models.Domain
+@model ValueScreener.Models.ViewModels.RefreshDataViewModel
 <br />
 
 <br />
 @if ((await AuthorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Create)).Succeeded)
 {
+    <dl >
+        <dt>Stocks count</dt>
+        <dd>@Model.StockNumber</dd>
+        <dt>Min Id</dt>
+        <dd>@Model.MinId</dd>
+        <dt>Max Id</dt>
+        <dd>@Model.MaxId</dd>
+    </dl>
+
+
     <form asp-controller="RefreshData" asp-action="RefreshMarketData" method="Post">
         <div class="form-group">
             <input type="submit" value="Refresh Market Data" class="btn btn-primary"/>
