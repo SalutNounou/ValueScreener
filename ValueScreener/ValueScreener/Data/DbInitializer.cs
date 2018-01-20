@@ -27,6 +27,19 @@ namespace ValueScreener.Data
 
         }
 
+        public static void ImportNyseStocks(ApplicationDbContext context)
+        {
+            ImportStocks(stocksNYSE, context);
+        }
+        public static void ImportNasdaqStocks(ApplicationDbContext context)
+        {
+            ImportStocks(stocksNasdaq, context);
+        }
+        public static void ImportAmexStocks(ApplicationDbContext context)
+        {
+            ImportStocks(stockAmex, context);
+        }
+
         private static void ImportStocks(Stock[] stocks, ApplicationDbContext context)
         {
             Thread.Sleep(1000);

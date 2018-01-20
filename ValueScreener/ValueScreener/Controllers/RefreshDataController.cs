@@ -32,7 +32,7 @@ namespace ValueScreener.Controllers
         }
 
         // GET: /<controller>/
-        public  async Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
             if (!isAuthorized.Succeeded)
@@ -157,9 +157,9 @@ namespace ValueScreener.Controllers
                 .Include(s => s.FinancialStatements)
                 .ThenInclude(f => f.CashFlowStatement)
                 .Include(s => s.PricingResult)
-                .ThenInclude(p=>p.AnnualResults)
-                .Include(s=>s.PricingResult)
-                .ThenInclude(p=>p.PiotroskiResults);
+                .ThenInclude(p => p.AnnualResults)
+                .Include(s => s.PricingResult)
+                .ThenInclude(p => p.PiotroskiResults);
             try
             {
                 await stocks.ForEachAsync(stock => _stockEvaluator.EvaluateStock(stock));
@@ -171,6 +171,46 @@ namespace ValueScreener.Controllers
                 return Content("Failure : " + e.Message + ((e.InnerException != null) ? e.InnerException.Message : String.Empty));
             }
             return RedirectToAction(nameof(Index));
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddNyseStocks()
+        {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
+            DbInitializer.ImportNyseStocks(_context);
+            return RedirectToAction(nameof(Index));
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddNasdaqStocks()
+        {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
+            DbInitializer.ImportNasdaqStocks(_context);
+            return RedirectToAction(nameof(Index));
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAmexStocks()
+        {
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, new Stock(), StockOperations.Refresh);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
+            DbInitializer.ImportAmexStocks(_context);
+            return RedirectToAction(nameof(Index));
+
         }
 
     }

@@ -35,4 +35,19 @@
             <input type="submit" value="Delete Valuations" class="btn btn-primary"/>
         </div>
     </form>
+    <form asp-controller="RefreshData" asp-action="AddNyseStocks" method="Post">
+        <div class="form-group">
+            <input type="submit" value="Add NYSE Stocks" class="btn btn-primary"/>
+        </div>
+    </form>
+    <form asp-controller="RefreshData" asp-action="AddNasdaqStocks" method="Post">
+        <div class="form-group">
+            <input type="submit" value="Add NASDAQ Stocks" class="btn btn-primary"/>
+        </div>
+    </form>
+    <form asp-controller="RefreshData" asp-action="AddAmexStocks" method="Post">
+        <div class="form-group">
+            <input type="submit" value="Add AMEX Stocks" class="btn btn-primary"/>
+        </div>
+    </form>
 }
