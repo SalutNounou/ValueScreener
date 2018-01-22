@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ValueScreener.Controllers.ScreenerColumns;
@@ -25,7 +26,8 @@ namespace ValueScreener.Controllers
             _screenerFactory = screenerFactory;
             _cellsGenerator = cellsGenerator;
         }
-     
+
+        [AllowAnonymous]
         public async Task<IActionResult> Screen(string criteria, int? page,string columns, string columnToAdd, string columnToRemove, string columnToken)
         {
             if (string.IsNullOrEmpty(criteria)) return NotFound();

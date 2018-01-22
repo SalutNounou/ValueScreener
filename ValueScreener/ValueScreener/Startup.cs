@@ -99,6 +99,8 @@ namespace ValueScreener
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            RecurringJob.AddOrUpdate<IApplicationBatchService>("Retrieve MarketData", service => service.RetrieveAllMArketData(), "0 3 */1 * *");
+
             RecurringJob.AddOrUpdate<IApplicationBatchService>("Retrieve Everything", service=>service.RetrieveEverything(), "0 4 */1 * *" );
         }
     }

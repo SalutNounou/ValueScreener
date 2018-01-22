@@ -12,7 +12,7 @@
 }
 
 <table class="table table-striped">
-    <tr><th>Price Ratios :</th></tr>
+    <tr><th><h4>Price Ratios :</h4></th></tr>
     <tr>
         <th> Price/Earnings Ratio</th>
         <td>
@@ -61,7 +61,7 @@
     </tr>
 </table>
 <table class="table table-striped">
-    <tr><th>Annual Returns</th></tr>
+    <tr><th><h4>Annual Returns :</h4></th></tr>
     <tr>
         <th>Year</th>
         @if (Model.PricingResult != null)
@@ -126,7 +126,7 @@
 </table>
 <br />
 <table class="table table-striped">
-    <tr><th>Financial Health :</th></tr>
+    <tr><th><h4>Financial Health :</h4></th></tr>
     <tr>
         <th> Net Current Asset Value</th>
         <td>
@@ -156,7 +156,7 @@
 {
     <table class="table table-striped">
         <tr>
-            <th>Annual Ratios :</th>
+            <th><h4>Annual Ratios :</h4></th>
         </tr>
         <tr>
             <th>Year</th>
@@ -229,7 +229,7 @@
 @if (@Model.PricingResult != null && @Model.PricingResult.PiotroskiResults.Any())
 {
     <table class="table table-striped">
-        <tr><th>Annual Piotroski F-Scores</th></tr>
+        <tr><th><h4>Annual Piotroski F-Scores :</h4></th></tr>
         <tr>
             <th>Year</th>
             @foreach (var piotroskiResult in Model.PricingResult.PiotroskiResults.OrderByDescending(r => r.Year))

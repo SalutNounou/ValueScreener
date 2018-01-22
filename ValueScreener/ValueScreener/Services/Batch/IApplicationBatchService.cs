@@ -41,14 +41,25 @@ namespace ValueScreener.Services.Batch
         public async Task RetrieveAllMArketData()
         {
 
-            var minId = await _context.Stocks.MinAsync(x => x.Id);
-            var maxId = await _context.Stocks.MaxAsync(x => x.Id);
-            var batchSize = 200;
-            var batchNumber = (int)Math.Ceiling((decimal)(maxId - minId + 1) / batchSize);
-            for (int i = 1; i <= batchNumber; i++)
-            {
-                await RetrieveMarketData(i, batchSize, minId, maxId);
-            }
+            //var minId = await _context.Stocks.MinAsync(x => x.Id);
+            //var maxId = await _context.Stocks.MaxAsync(x => x.Id);
+            //var batchSize = 200;
+            //var batchNumber = (int)Math.Ceiling((decimal)(maxId - minId + 1) / batchSize);
+            //for (int i = 1; i <= batchNumber; i++)
+            //{
+            //    await RetrieveMarketData(i, batchSize, minId, maxId);
+            //}
+
+            var stocks = _context.Stocks
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.BalanceSheet)
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.IncomeStatement)
+                .Include(s => s.FinancialStatements)
+                .ThenInclude(f => f.CashFlowStatement);
+               // Where(x => x.Id >= idFrom && x.Id <= idTo);
+            await _stockMarketDataUpdater.UpdateMarketDataBatchAsync(stocks);
+            await _context.SaveChangesAsync();
         }
 
         public async Task RetrieveMarketData(int whichBatch, int batchSize, int minId, int maxId)
@@ -134,7 +145,7 @@ namespace ValueScreener.Services.Batch
 
         public async Task RetrieveEverything()
         {
-            await RetrieveAllMArketData();
+           // await RetrieveAllMArketData();
             await RetrieveAllFinancialStatements();
             await ReevaluateAllStocks();
 

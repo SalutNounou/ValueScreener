@@ -36,7 +36,7 @@
                 <td>@Html.DisplayFor(model => statement.FormType)</td>
             }
         </tr>
-        <tr><th>Assets</th></tr>
+        <tr><th><h3>Assets</h3></th></tr>
         <tr>
             <th>Cash and Equivalent</th>
             @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
@@ -121,7 +121,7 @@
                 <th>@Html.DisplayFor(model => statement.BalanceSheet.TotalAssets)</th>
             }
         </tr>
-        <tr><th>Liabilities</th></tr>
+        <tr><th><h3>Liabilities</h3></th></tr>
         <tr>
             <th>Account Payables</th>
             @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
@@ -178,7 +178,7 @@
                 <th>@Html.DisplayFor(model => statement.BalanceSheet.TotalLiabilities)</th>
             }
         </tr>
-        <tr><th>Equity</th></tr>
+        <tr><th><h3>Equity</h3></th></tr>
         <tr>
             <th>Preferred Stock</th>
             @foreach (var statement in Model.FinancialStatements.OrderByDescending(f=>f.FiscalYear).ThenByDescending(f=>f.FiscalQuarter))
