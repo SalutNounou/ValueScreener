@@ -24,5 +24,10 @@ namespace ValueScreener.Controllers.ScreenerColumns
                 StockId = stock.Id
             };
         }
+
+        public CellKind GetCellKind()
+        {
+            return CellKind.Percentage;
+        }
     }
 }

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ValueScreener.Controllers.ScreenerColumns;
 using ValueScreener.Controllers.Screeners;
@@ -56,6 +58,38 @@ namespace ValueScreener.Controllers
             return View(viewModel);
         }
 
+
+
+
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ScreenGeneric(GenericScreenerViewModel viewModel)
+        {
+            GenericScreenerViewModel newViewModel;
+            var stocks = await _context.Stocks.AsNoTracking().ToListAsync();
+            if (viewModel != null)
+            {
+                
+                newViewModel = viewModel;
+                if(newViewModel.Criterias==null ) newViewModel.Criterias = new List<GenericScreenerCriteria>();
+                if (!string.IsNullOrEmpty(viewModel.CriteriaToAdd) && ColumnConstants.Columns.ContainsKey(viewModel.CriteriaToAdd))
+                {
+                    var criteria = new GenericScreenerCriteria
+                    {
+                        Name = ColumnConstants.Columns[viewModel.CriteriaToAdd],
+                        Id = viewModel.CriteriaToAdd,
+                        Operation = viewModel.CriteriaOperators[0].Value,
+                        ValueType = _cellsGenerator.GetColumn(viewModel.CriteriaToAdd).GetCellKind()
+                    };
+                    newViewModel.Criterias.Add(criteria);
+                }
+            }
+            else
+            {
+                newViewModel = new GenericScreenerViewModel{Criterias = new List<GenericScreenerCriteria>()};
+            }
+            return View(newViewModel);
+        }
 
         private bool ManageColumns(IScreener screener, string columns, string columnToAdd, string columnToRemove, out List<string> columnsTodisplay, string columnToken)
         {

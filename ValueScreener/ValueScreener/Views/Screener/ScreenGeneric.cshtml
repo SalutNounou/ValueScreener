@@ -1,0 +1,52 @@
+﻿@using ValueScreener.Controllers.ScreenerColumns
+@using ValueScreener.Models.ViewModels
+@model ValueScreener.Models.ViewModels.GenericScreenerViewModel
+
+<br />
+<br />
+
+<form asp-action="ScreenGeneric" method="get" id="my_form">
+    @if (Model.Criterias != null)
+    {
+        for (var index = 0; index < Model.Criterias.Count; index++)
+        {
+            <label asp-for="@Model.Criterias[index].Name"></label>
+            <input asp-for="@Model.Criterias[index].Name" readonly="readonly" />
+            <select asp-for="@Model.Criterias[index].Operation" asp-items="@Model.CriteriaOperators"></select>
+            <input asp-for="@Model.Criterias[index].ValueType" type="hidden" />
+            <input asp-for="@Model.Criterias[index].Id" type="hidden" />
+            if (Model.Criterias[index].ValueType == CellKind.Text)
+            {
+                <input asp-for="@Model.Criterias[index].StringValue" />
+            }
+            if (Model.Criterias[index].ValueType == CellKind.Number)
+            {
+                <input asp-for="@Model.Criterias[index].NumberValue" />
+            }
+            if (Model.Criterias[index].ValueType == CellKind.Percentage)
+            {
+                <input asp-for="@Model.Criterias[index].NumberValue" /> @:%
+            }
+
+            <br />
+        }
+    }
+    <br />
+    <label asp-for="CriteriaToAdd"></label>
+    <select name="CriteriaToAdd">
+        <option value="none">None</option>
+        @foreach (var column in ColumnConstants.Columns)
+        {
+            <option value="@column.Key">@column.Value</option>
+        }
+    </select>
+    <br />
+    <button type="submit">Go</button>
+
+
+</form>
+
+<br />
+<p>Page Index  : @Model.PageIndex</p>
+<a class="btn btn-primary" href="@Model.GetUrl(Model.PageIndex+1)">Next</a>
+

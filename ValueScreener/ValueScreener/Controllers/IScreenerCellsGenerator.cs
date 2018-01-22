@@ -9,6 +9,7 @@ namespace ValueScreener.Controllers
     {
         IEnumerable<ColumnTitle> GetColumnTitles(List<string> screenerColumns);
         IEnumerable<ScreenerRowViewModel> GetRows(IEnumerable<Stock> stocks, List<string> columns);
+        IScreenerColumn GetColumn(string id);
     }
 
     public class ScreenerCellsGenerator : IScreenerCellsGenerator
@@ -96,6 +97,13 @@ namespace ValueScreener.Controllers
                 result.Add(row);
             }
             return result;
+        }
+
+        public IScreenerColumn GetColumn(string id)
+        {
+            if (Columns.ContainsKey(id))
+                return Columns[id];
+            return null;
         }
     }
 

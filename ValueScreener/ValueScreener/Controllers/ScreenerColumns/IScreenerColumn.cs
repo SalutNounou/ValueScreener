@@ -7,5 +7,6 @@ namespace ValueScreener.Controllers.ScreenerColumns
     {
         string DisplayName { get; }
         ScreenerCellViewModel GetCell(Stock stock);
+        CellKind GetCellKind();
     }
 }
