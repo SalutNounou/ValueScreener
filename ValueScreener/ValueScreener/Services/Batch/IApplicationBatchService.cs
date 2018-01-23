@@ -85,7 +85,7 @@ namespace ValueScreener.Services.Batch
 
         public async Task RetrieveAllFinancialStatements()
         {
-            if (DateTime.Today.Day % 5 == 1) return;
+            if (DateTime.Today.Day % 5 != 1) return;
 
             var minId = await _context.Stocks.MinAsync(x => x.Id);
             var maxId = await _context.Stocks.MaxAsync(x => x.Id);
