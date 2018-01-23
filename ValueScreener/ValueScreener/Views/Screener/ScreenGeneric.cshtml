@@ -3,48 +3,86 @@
 @model ValueScreener.Models.ViewModels.GenericScreenerViewModel
 
 <br />
+<h1>Build your own Screener</h1>
 <br />
 
-<form asp-action="ScreenGeneric" method="get" id="my_form">
+<form asp-action="ScreenGeneric" method="get" id="my_form" class="form-group">
     @if (Model.Criterias != null)
     {
         for (var index = 0; index < Model.Criterias.Count; index++)
         {
-            <label asp-for="@Model.Criterias[index].Name"></label>
-            <input asp-for="@Model.Criterias[index].Name" readonly="readonly" />
-            <select asp-for="@Model.Criterias[index].Operation" asp-items="@Model.CriteriaOperators"></select>
-            <input asp-for="@Model.Criterias[index].ValueType" type="hidden" />
-            <input asp-for="@Model.Criterias[index].Id" type="hidden" />
-            if (Model.Criterias[index].ValueType == CellKind.Text)
-            {
-                <input asp-for="@Model.Criterias[index].StringValue" />
-            }
-            if (Model.Criterias[index].ValueType == CellKind.Number)
-            {
-                <input asp-for="@Model.Criterias[index].NumberValue" />
-            }
-            if (Model.Criterias[index].ValueType == CellKind.Percentage)
-            {
-                <input asp-for="@Model.Criterias[index].NumberValue" /> @:%
-            }
+            <div class="form-group form-inline">
+                <label asp-for="@Model.Criterias[index].Name"></label>
+                <input asp-for="@Model.Criterias[index].Name" readonly="readonly" class="form-control" />
+                <select asp-for="@Model.Criterias[index].Operation" asp-items="@Model.CriteriaOperators" class="form-control"></select>
+                <input asp-for="@Model.Criterias[index].ValueType" type="hidden" />
+                <input asp-for="@Model.Criterias[index].Id" type="hidden" />
+                @if (Model.Criterias[index].ValueType == CellKind.Text)
+                {
+                    <input asp-for="@Model.Criterias[index].StringValue" class="form-control" />
+                }
+                @if (Model.Criterias[index].ValueType == CellKind.Number)
+                {
+                    <input asp-for="@Model.Criterias[index].NumberValue" class="form-control" />
+                }
+                @if (Model.Criterias[index].ValueType == CellKind.Percentage)
+                {
+                    <input asp-for="@Model.Criterias[index].NumberValue" class="form-control" /> @:%
+                }
 
-            <br />
+               
+            </div>
         }
     }
-    <br />
-    <label asp-for="CriteriaToAdd"></label>
-    <select name="CriteriaToAdd">
-        <option value="none">None</option>
-        @foreach (var column in ColumnConstants.Columns)
-        {
-            <option value="@column.Key">@column.Value</option>
-        }
-    </select>
-    <br />
-    <button type="submit">Go</button>
-
+    <div class="form-group form-inline">
+        <label asp-for="CriteriaToAdd"></label>
+        <select name="CriteriaToAdd" class="form-control">
+            <option value="none">None</option>
+            @foreach (var column in ColumnConstants.Columns)
+            {
+                <option value="@column.Key">@column.Value</option>
+            }
+        </select>
+        <br />
+        <br />
+        <button type="submit" class="btn btn-primary btn-lg">Let's Go!</button>
+    </div>
 
 </form>
+<br/>
+<h2>Results :</h2>
+<br/>
+<div class="row">
+    <table class="table table-striped">
+        <tr>
+            @foreach (var columnTitle in Model.ColumnTitles)
+            {
+                <th>@columnTitle.Title
+                    @*@if (!columnTitle.IsSticky)
+                    {
+                        <a asp-route-page="@Model.PageIndex"
+                           asp-route-criteria="@ViewData["Criteria"]"
+                           asp-route-columns="@ViewData["Columns"]"
+                           asp-route-columnToken="x"
+                           asp-route-columnToRemove="@columnTitle.columnId">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    }*@
+                </th>   
+            }
+        </tr>
+        @foreach (var row in Model.Rows)
+        {
+            <tr>
+                @foreach (var cell in row.Cells)
+                {
+                    @await Component.InvokeAsync("ScreenerCell", new { viewModel = cell })
+                }
+            </tr>
+        }
+    </table>
+</div>
+
 
 <br />
 <p>Page Index  : @Model.PageIndex</p>

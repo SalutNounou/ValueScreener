@@ -89,7 +89,7 @@ namespace ValueScreener.Controllers.ScreenerColumns
             {AssetTurnover, AssetTurnoverDisplay },
             {AvgAssetTurnover, AvgAssetTurnoverDisplay },
            
-            {CurrentRatio, CurrencyDisplay },
+            {CurrentRatio, CurrentRatioDisplay },
             {AvgCurrentRatio, AvgCurrentRatioDisplay },
             {QuickRatio, QuickRatioDisplay },
             {AvgQuickRatio, AvgQuickRatioDisplay },

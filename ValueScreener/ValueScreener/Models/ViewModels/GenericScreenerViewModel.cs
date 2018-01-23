@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ValueScreener.Controllers.ScreenerCriteria;
+using ValueScreener.Controllers.Screeners;
 
 namespace ValueScreener.Models.ViewModels
 {
@@ -10,23 +12,26 @@ namespace ValueScreener.Models.ViewModels
         public GenericScreenerViewModel()
         {
             AvailableCriterias = new List<SelectListItem>();
+            ColumnTitles = new List<ColumnTitle>();
+            Rows = new List<ScreenerRowViewModel>();
         }
-        public List<GenericScreenerCriteria> Criterias { get; set; }
+        public List<ScreenerCriteriaViewModel> Criterias { get; set; }
         public bool FollowingSpecified { get; set; }
 
         public List<SelectListItem> AvailableCriterias { get; set; }
-        [Display(Name = "New Criteria")]
+        [Display(Name = "Add New Criteria : ")]
         public string CriteriaToAdd { get; set; }
 
         public List<SelectListItem> CriteriaOperators { get; set; } = new List<SelectListItem>
         {
-            new SelectListItem { Value = "gt", Text = "Greater Than" },
-            new SelectListItem { Value = "lt", Text = "Lower Than" },
-            new SelectListItem { Value = "eq", Text = "Equals"  },
-            new SelectListItem { Value = "neq", Text = "Different From"  },
+            new SelectListItem { Value =CriteriaConstants.Greater, Text = "Greater Than" },
+            new SelectListItem { Value = CriteriaConstants.Lower, Text = "Lower Than" },
+            new SelectListItem { Value = CriteriaConstants.IsEqual, Text = "Equals"  },
+            new SelectListItem { Value = CriteriaConstants.Different, Text = "Different From"  },
         };
 
-
+        public List<ColumnTitle> ColumnTitles { get; }
+        public List<ScreenerRowViewModel> Rows { get; }
 
         public string GetUrl(int pageIndex)
         {
@@ -59,17 +64,10 @@ namespace ValueScreener.Models.ViewModels
     }
 
 
-    public interface IGenericScreenerCriteria
+  
+    public class ScreenerCriteriaViewModel 
     {
-        string Name { get; set; }
-        string Id { get; set; }
-        decimal NumberValue { get; set; }
-        string Operation { get; set; }
-    }
-
-    public class GenericScreenerCriteria : IGenericScreenerCriteria
-    {
-        [Display(Name = "Criteria ")]
+        [Display(Name = "Criteria : ")]
         public string Name { get; set; }
         public string Id { get; set; }
         public decimal NumberValue { get; set; }

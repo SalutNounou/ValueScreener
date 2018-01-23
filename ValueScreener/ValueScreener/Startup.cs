@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ValueScreener.Authorization;
 using ValueScreener.Controllers;
+using ValueScreener.Controllers.ScreenerCriteria;
 using ValueScreener.Controllers.Screeners;
 using ValueScreener.Data;
 using ValueScreener.Models;
@@ -52,6 +53,7 @@ namespace ValueScreener
             services.AddTransient<IValuationHintAnalyzer, ValuationHintAnalyzer>();
             services.AddTransient<IFinancialStatementUpdater, FinancialStatementUpdater>();
             services.AddSingleton<IScreenerFactory, ScreenerFactory>();
+            services.AddSingleton<IScreenerCriteriaFactory, ScreenerCriteriaFactory>();
             services.AddSingleton<IScreenerCellsGenerator, ScreenerCellsGenerator>();
             services.AddTransient<IApplicationBatchService, ApplicationBatchService>();
             services.AddMvc(config =>
