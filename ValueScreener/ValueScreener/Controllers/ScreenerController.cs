@@ -66,18 +66,42 @@ namespace ValueScreener.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ScreenGeneric(GenericScreenerViewModel viewModel)
         {
-            GenericScreenerViewModel newViewModel;
+            ViewData["Title"] = "Create your Screener";
+           
             var stocks = await _context.Stocks
                 .Include(s => s.MarketData)
                 .Include(s => s.PricingResult)
                 .ThenInclude(p => p.PiotroskiResults)
                 .Include(s => s.PricingResult)
                 .ThenInclude(p => p.AnnualResults)
-                .Where(x => x.PricingResult != null && x.MarketData != null).AsNoTracking().ToListAsync();
+                .Where(x => x.PricingResult != null && x.MarketData != null &&x.MarketData.MarketCapitalization>0).AsNoTracking().ToListAsync();
                
+           var  newViewModel = ManageCriterias(viewModel);
+            foreach (var criteriaViewModel in newViewModel.Criterias)
+            {
+                var criteria = _criteriaFactory.GetCriteria(criteriaViewModel.Id);
+                if (criteria == null) continue;
+                stocks =  stocks
+                    .Where(x => criteria.StockMatch(x,criteriaViewModel)).ToList(); 
+            }
+            var pageList =  PaginatedList<Stock>.Create(stocks, newViewModel.PageIndex>0? newViewModel.PageIndex:1, 25);
+            List<string> columnsTodisplay = new List<string>();
+            if (HandleColumnsGeneric(viewModel, newViewModel,  columnsTodisplay)) return NotFound();
+
+
+            newViewModel.ColumnTitles.AddRange(_cellsGenerator.GetColumnTitles(columnsTodisplay));
+            newViewModel.Rows.AddRange(_cellsGenerator.GetRows(pageList, columnsTodisplay));
+            HandlePagination(newViewModel, pageList);
+
+
+            return View(newViewModel);
+        }
+
+        private GenericScreenerViewModel ManageCriterias(GenericScreenerViewModel viewModel)
+        {
+            GenericScreenerViewModel newViewModel;
             if (viewModel != null)
             {
-
                 newViewModel = viewModel;
                 if (newViewModel.Criterias == null) newViewModel.Criterias = new List<ScreenerCriteriaViewModel>();
                 if (!string.IsNullOrEmpty(viewModel.CriteriaToAdd) && _criteriaFactory.CriteriaExists(viewModel.CriteriaToAdd))
@@ -95,24 +119,75 @@ namespace ValueScreener.Controllers
             }
             else
             {
-                newViewModel = new GenericScreenerViewModel { Criterias = new List<ScreenerCriteriaViewModel>() };
+                newViewModel = new GenericScreenerViewModel {Criterias = new List<ScreenerCriteriaViewModel>()};
             }
-
-            foreach (var criteriaViewModel in newViewModel.Criterias)
+            if (!string.IsNullOrEmpty(newViewModel.CriteriaToRemove) &&
+                newViewModel.Criterias.Any(x => x.Id == newViewModel.CriteriaToRemove))
             {
-                var criteria = _criteriaFactory.GetCriteria(criteriaViewModel.Id);
-                if (criteria == null) continue;
-                stocks =  stocks
-                    .Where(x => criteria.StockMatch(x,criteriaViewModel)).ToList(); 
+                var criteria = newViewModel.Criterias.First(x => x.Id == newViewModel.CriteriaToRemove);
+                newViewModel.Criterias.Remove(criteria);
+            }
+            return newViewModel;
+        }
+
+        private bool HandleColumnsGeneric(GenericScreenerViewModel viewModel, GenericScreenerViewModel newViewModel,
+             List<string> columnsTodisplay)
+        {
+            if (!newViewModel.Criterias.Any() && string.IsNullOrEmpty(newViewModel.Columns))
+            {
+                columnsTodisplay.Add(ColumnConstants.MarketCap);
+                columnsTodisplay.Add(ColumnConstants.Per);
+            }
+            if (!string.IsNullOrEmpty(newViewModel.Columns))
+            {
+                var currentColumns = newViewModel.Columns.Split(',').ToList();
+                if (currentColumns.Any(x => !ColumnConstants.Columns.ContainsKey(x)))
+                {
+                    return true;
+                }
+                columnsTodisplay.AddRange(currentColumns);
+            }
+            if (string.IsNullOrEmpty(newViewModel.ColumnToAdd) && string.IsNullOrEmpty(newViewModel.ColumnToRemove))
+            {
+                if (!string.IsNullOrEmpty(newViewModel.CriteriaToAdd))
+                {
+                    if (!columnsTodisplay.Contains(newViewModel.CriteriaToAdd) &&
+                        ColumnConstants.Columns.ContainsKey(newViewModel.CriteriaToAdd))
+                    {
+                        columnsTodisplay.Add(newViewModel.CriteriaToAdd);
+                    }
+                }
+            }
+            if (!string.IsNullOrEmpty(newViewModel.ColumnToAdd))
+            {
+                if (!columnsTodisplay.Contains(newViewModel.ColumnToAdd) &&
+                    ColumnConstants.Columns.ContainsKey(newViewModel.ColumnToAdd))
+                    columnsTodisplay.Add(newViewModel.ColumnToAdd);
             }
 
-            var pageList =  PaginatedList<Stock>.Create(stocks, 1, 25);
+            if (!string.IsNullOrEmpty(newViewModel.ColumnToRemove))
+            {
+                if (columnsTodisplay.Contains(newViewModel.ColumnToRemove))
+                    columnsTodisplay.Remove(newViewModel.ColumnToRemove);
+            }
+            foreach (var column in ColumnConstants.Columns.Where(x => !columnsTodisplay.Contains(x.Key)))
+            {
+                viewModel.AvailableAdditionalColumns.Add(column.Key, column.Value);
+            }
+            newViewModel.Columns = string.Join(',', columnsTodisplay);
+            newViewModel.ColumnToAdd = null;
+            newViewModel.ColumnToRemove = null;
+            newViewModel.CriteriaToAdd = null;
+            newViewModel.CriteriaToRemove = null;
+            return false;
+        }
 
-            var columnsTodisplay = new List<string> {ColumnConstants.NcavDiscount,ColumnConstants.MarketCap, ColumnConstants.Ncav };
-            newViewModel.ColumnTitles.AddRange(_cellsGenerator.GetColumnTitles(columnsTodisplay));
-            newViewModel.Rows.AddRange(_cellsGenerator.GetRows(pageList, columnsTodisplay));
-
-            return View(newViewModel);
+        private static void HandlePagination(GenericScreenerViewModel newViewModel, PaginatedList<Stock> pageList)
+        {
+            newViewModel.PageIndex = pageList.PageIndex;
+            newViewModel.TotalPages = pageList.TotalPages;
+            newViewModel.HasNextPage = pageList.HasNextPage;
+            newViewModel.HasPreviousPage = pageList.HasPreviousPage;
         }
 
         private bool ManageColumns(IScreener screener, string columns, string columnToAdd, string columnToRemove, out List<string> columnsTodisplay, string columnToken)

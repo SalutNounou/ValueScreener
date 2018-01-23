@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ValueScreener.Controllers.ScreenerColumns;
 
 namespace ValueScreener.Controllers.ScreenerCriteria
@@ -60,8 +61,8 @@ namespace ValueScreener.Controllers.ScreenerCriteria
         };
         public IScreenerCriteria GetCriteria(string id)
         {
-            if (_criterias.ContainsKey(id)) return _criterias[id];
-            return null;
+                if (_criterias.ContainsKey(id)) return _criterias[id];
+                return null;
         }
 
         public bool CriteriaExists(string id)
